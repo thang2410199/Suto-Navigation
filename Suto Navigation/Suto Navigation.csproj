@@ -108,7 +108,6 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EventArgs\OnBackButtonArgs.cs" />
     <Compile Include="EventArgs\OnScreenModeChangedArgs.cs" />
     <Compile Include="Helpers\SmartWeakEvent.cs" />
     <Compile Include="Interfaces\IPanel.cs" />

@@ -20,7 +20,13 @@ namespace SutoNavigation.Transitions
         public InstagramPanelTransition()
         {
             Direction = TransitionDirection.RightToLeft;
-            Duration = TimeSpan.FromMilliseconds(4000);
+            Duration = TimeSpan.FromMilliseconds(400);
+        }
+
+        public InstagramPanelTransition(TimeSpan Duration)
+        {
+            Direction = TransitionDirection.RightToLeft;
+            this.Duration = Duration;
         }
 
         /// <summary>
@@ -34,19 +40,19 @@ namespace SutoNavigation.Transitions
             {
                 currentPanel = userControl;
                 var transform = currentPanel.RenderTransform as CompositeTransform;
-                switch(Direction)
+                switch (Direction)
                 {
                     case TransitionDirection.LeftToRight:
-                        transform.TranslateX = -currentPanel.host.Size.Width;
+                        transform.TranslateX = -currentPanel.Host.Size.Width;
                         break;
                     case TransitionDirection.RightToLeft:
-                        transform.TranslateX = currentPanel.host.Size.Width;
+                        transform.TranslateX = currentPanel.Host.Size.Width;
                         break;
                     case TransitionDirection.TopToBottom:
-                        transform.TranslateX = -currentPanel.host.Size.Height;
+                        transform.TranslateX = -currentPanel.Host.Size.Height;
                         break;
                     case TransitionDirection.BottomToTop:
-                        transform.TranslateX = currentPanel.host.Size.Height;
+                        transform.TranslateX = currentPanel.Host.Size.Height;
                         break;
 
                 }
@@ -61,7 +67,7 @@ namespace SutoNavigation.Transitions
         public override List<Timeline> CreateAnimation(ref PanelBase userControl, bool isBack)
         {
             var animations = new List<Timeline>();
-            var stack = userControl.host.PanelStack;
+            var stack = userControl.Host.PanelStack;
             if (stack.Count > 0)
             {
                 lastPanel = (isBack ? stack[stack.Count - 2] : stack.Last());
@@ -77,7 +83,7 @@ namespace SutoNavigation.Transitions
                 animations.Add(lastAnimation);
             }
 
-            var newPosition = base.GetSlideTransitionProperty(Direction, userControl.host);
+            var newPosition = base.GetSlideTransitionProperty(Direction, userControl.Host);
             DoubleAnimation animation = new DoubleAnimation();
             animation.Duration = Duration;
             animation.EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut };
@@ -85,13 +91,6 @@ namespace SutoNavigation.Transitions
             Storyboard.SetTarget(animation, userControl.RenderTransform);
             Storyboard.SetTargetProperty(animation, base.GetTransitionProperty(Direction));
             animations.Add(animation);
-
-            if (isBack)
-                UnregisterManipulation(ref currentPanel);
-            else
-                RegisterManipulation(ref currentPanel);
-
-
 
             return animations;
         }
@@ -117,7 +116,8 @@ namespace SutoNavigation.Transitions
 
                 DoubleAnimation animation = new DoubleAnimation();
                 animation.To = 0;
-                animation.Duration = TimeSpan.FromMilliseconds(200);
+                //Set the duration to relect how much they had moved the panel
+                animation.Duration = TimeSpan.FromMilliseconds(Duration.TotalMilliseconds * transform.TranslateX / currentPanel.Host.Size.Width);
                 QuadraticEase ease = new QuadraticEase();
                 ease.EasingMode = EasingMode.EaseOut;
                 animation.EasingFunction = ease;
@@ -132,7 +132,7 @@ namespace SutoNavigation.Transitions
             else
             {
                 //Invoke back event.
-                currentPanel.host.GoBack();
+                currentPanel.Host.GoBack();
             }
         }
 
@@ -145,11 +145,11 @@ namespace SutoNavigation.Transitions
                 newX = 0;
             else
             {
-                var stack = currentPanel.host.PanelStack;
+                var stack = currentPanel.Host.PanelStack;
                 lastPanel = stack[stack.Count - 2];
                 var lastTransform = lastPanel.RenderTransform as CompositeTransform;
 
-                lastTransform.TranslateX = (1 - newX / currentPanel.host.Size.Width) * -FeedbackOffset;
+                lastTransform.TranslateX = (1 - newX / currentPanel.Host.Size.Width) * -FeedbackOffset;
             }
 
             transform.TranslateX = newX;

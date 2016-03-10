@@ -20,7 +20,7 @@
         
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" >
 
-            <Button Content="Navigate to LoginPannel" Click="Button_Click"/>
+            <Button Content="Use Instagram Transition" Click="Button_Click"/>
         </StackPanel>
 
     </Grid>

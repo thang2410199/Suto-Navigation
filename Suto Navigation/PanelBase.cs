@@ -12,7 +12,7 @@ namespace SutoNavigation.NavigationService
 {
     public class PanelBase : UserControl, IPanel
     {
-        public IPanelHost host { get; set; }
+        public IPanelHost Host { get; set; }
 
         /// <summary>
         /// Transition data use when navigate to and from. Default behaviour is try to revert the transition
@@ -45,7 +45,7 @@ namespace SutoNavigation.NavigationService
 
         public virtual void PanelSetup(IPanelHost host, Dictionary<string, object> arguments)
         {
-            this.host = host;
+            this.Host = host;
         }
     }
 }

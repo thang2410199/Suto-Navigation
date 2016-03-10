@@ -9,7 +9,7 @@ namespace SutoNavigation.NavigationService.Interfaces
 {
     public interface IPanel
     {
-        IPanelHost host { get; set; }
+        IPanelHost Host { get; set; }
         PanelTransition Transition { get; set; }
         /// <summary>
         /// Fired when the panel is being created.

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -35,6 +36,14 @@ namespace Suto_Navigation.Sample
             panelContainer.Navigate(typeof(ProfilePanel));
 
             root.Children.Add(panelContainer);
+
+
+            SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
+        }
+
+        private void OnBackRequested(object sender, BackRequestedEventArgs e)
+        {
+            e.Handled = this.panelContainer.GoBack();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

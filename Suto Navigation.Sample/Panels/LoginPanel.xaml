@@ -85,7 +85,7 @@
         
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" >
 
-            <Button Content="Navigate to Provider" Click="Button_Click"/>
+            <Button Content="Use FadeIn Transition" Click="Button_Click"/>
         </StackPanel>
     </Grid>
 </suto:PanelBase>

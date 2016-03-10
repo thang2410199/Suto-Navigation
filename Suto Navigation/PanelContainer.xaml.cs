@@ -40,6 +40,13 @@ namespace SutoNavigation.NavigationService
         Storyboard transitionStoryboard;
 
         /// <summary>
+        /// Allow Container to work in recycle mode.
+        /// Default is Nomarl, container create new Panel for each navigation request
+        /// Recycle Mode: TODO, try to reuse current available Panel when navigating, possible change navigation stack order
+        /// </summary>
+        public OperationMode OperationMode { get; set; } = OperationMode.Normal;
+
+        /// <summary>
         /// Fired when the screen mode changes
         /// </summary>
         public event EventHandler<OnScreenModeChangedArgs> OnScreenModeChanged
@@ -61,7 +68,7 @@ namespace SutoNavigation.NavigationService
 
 
         public List<PanelBase> PanelStack { get; set; }
-        private State state;
+        private NavigationState state;
 
         public PanelContainer()
         {
@@ -124,7 +131,7 @@ namespace SutoNavigation.NavigationService
             lock (PanelStack)
             {
                 //TODO: Handle if transition is running
-                if (state != State.Idle)
+                if (state != NavigationState.Idle)
                 {
                     // We can't do anything if we are already animating.
                     return null;
@@ -144,10 +151,10 @@ namespace SutoNavigation.NavigationService
                 if (leavingPanel.Transition != null)
                 {
                     // TODO: Save animation state when navigating to to use here, or allow custom transition from outside
-                    transitionStoryboard?.Stop();
+                    //transitionStoryboard?.Stop();
                     SetupTransition(ref leavingPanel, true);
                     transitionStoryboard.Begin();
-                    state = State.Transiting;
+                    state = NavigationState.Transiting;
                 }
                 else
                 {
@@ -178,7 +185,7 @@ namespace SutoNavigation.NavigationService
                 panel.RenderTransform = transform;
             }
 
-            transitionStoryboard?.Stop();
+            //transitionStoryboard?.Stop();
             if (panel.Transition != null)
                 SetupTransition(ref panel);
             PanelStack.Add(panel);
@@ -187,7 +194,7 @@ namespace SutoNavigation.NavigationService
             if (panel.Transition != null)
             {
                 transitionStoryboard.Begin();
-                state = State.Transiting;
+                state = NavigationState.Transiting;
             }
             else
             {
@@ -206,7 +213,7 @@ namespace SutoNavigation.NavigationService
             {
                 transitionStoryboard.Children.Add(item);
             }
-            
+
 
             if (isBack)
                 transitionStoryboard.Completed += PanelBackAnimation_Completed;
@@ -238,7 +245,7 @@ namespace SutoNavigation.NavigationService
             // Update the back button
             UpdateBackButton();
             FireOnNavigateTo(PanelStack.Last());
-            state = State.Idle;
+            state = NavigationState.Idle;
             FireOnNavigateComplete();
         }
 
@@ -251,7 +258,7 @@ namespace SutoNavigation.NavigationService
             root.Children.Remove(leavingPanel);
 
             UpdateBackButton();
-            state = State.Idle;
+            state = NavigationState.Idle;
         }
 
         #region handle back request
@@ -359,11 +366,17 @@ namespace SutoNavigation.NavigationService
         #endregion
     }
 
-    internal enum State
+    public enum NavigationState
     {
         Idle,
         FadingIn,
         FadingOut,
         Transiting,
+    }
+
+    public enum OperationMode
+    {
+        Normal,
+        Recycle,
     }
 }

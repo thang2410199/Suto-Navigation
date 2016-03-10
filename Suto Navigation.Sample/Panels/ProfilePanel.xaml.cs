@@ -13,13 +13,11 @@ namespace Suto_Navigation.Sample.Panes
         public ProfilePanel()
         {
             this.InitializeComponent();
-
-            GestureRecognizer input = new GestureRecognizer();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            this.host.Navigate(typeof(LoginPanel), null, new InstagramPanelTransition());
+            this.Host.Navigate(typeof(LoginPanel), null, new InstagramPanelTransition(TimeSpan.FromSeconds(1)));
         }
     }
 }
