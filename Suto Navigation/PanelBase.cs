@@ -1,5 +1,6 @@
 ﻿using SutoNavigation.NavigationService;
 using SutoNavigation.NavigationService.Interfaces;
+using SutoNavigation.Transitions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +12,16 @@ namespace SutoNavigation.NavigationService
 {
     public class PanelBase : UserControl, IPanel
     {
-        protected IPanelHost host;
+        public IPanelHost host { get; set; }
 
+        /// <summary>
+        /// Transition data use when navigate to and from. Default behaviour is try to revert the transition
+        /// if is assigned to null value, no transition will play
+        /// </summary>
         public PanelTransition Transition
         {
             get; set;
-        } = new PanelTransition(PanelTransitionType.None);
+        }
 
         public virtual void OnCleanupPanel()
         {

@@ -1,4 +1,6 @@
 ﻿using SutoNavigation.NavigationService;
+using SutoNavigation.Transitions;
+using System;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
 
@@ -17,7 +19,7 @@ namespace Suto_Navigation.Sample.Panes
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            this.host.Navigate(typeof(LoginPanel), null, new PanelTransition(PanelTransitionType.InstagramLike));
+            this.host.Navigate(typeof(LoginPanel), null, new InstagramPanelTransition());
         }
     }
 }

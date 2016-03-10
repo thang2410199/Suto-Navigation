@@ -1,4 +1,5 @@
 ﻿using SutoNavigation.NavigationService;
+using SutoNavigation.Transitions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,7 +28,7 @@ namespace Suto_Navigation.Sample.Panes
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            this.host.Navigate(typeof(ProviderPanel), null, new PanelTransition(PanelTransitionType.FadeIn, TimeSpan.FromSeconds(2)));
+            this.host.Navigate(typeof(ProviderPanel), null, new FadeInTransition());
         }
     }
 }

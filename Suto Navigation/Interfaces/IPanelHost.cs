@@ -1,24 +1,26 @@
-﻿using System;
+﻿using SutoNavigation.Transitions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.UI;
 
 namespace SutoNavigation.NavigationService.Interfaces
 {
     public interface IPanelHost
     {
-
+        Size Size { get; }
         /// <summary>
         /// Thresshold for back button visibility, default value should be 0, used in <see cref="GoBack"/> method
         /// </summary>
         int MinimumThresshold { get; set; }
 
         /// <summary>
-        /// Set the distance the last panel will move when using Instagram transition. Default value 100
+        /// Store all panel in the navigation stack
         /// </summary>
-        double FeedbackOffset { get; set; }
+        List<PanelBase> PanelStack { get; set; }
 
         /// <summary>
         /// Fired when the screen mode changes

@@ -19,6 +19,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
+using SutoNavigation.Transitions;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -28,7 +29,13 @@ namespace SutoNavigation.NavigationService
     {
         public int MinimumThresshold { get; set; } = 0;
 
-        public double FeedbackOffset { get; set; } = 100;
+        public Size Size
+        {
+            get
+            {
+                return this.RenderSize;
+            }
+        }
 
         Storyboard transitionStoryboard;
 
@@ -53,14 +60,14 @@ namespace SutoNavigation.NavigationService
         SmartWeakEvent<EventHandler<EventArgs>> onNavigationComplete = new SmartWeakEvent<EventHandler<EventArgs>>();
 
 
-        List<IPanel> PanelStack;
+        public List<PanelBase> PanelStack { get; set; }
         private State state;
 
         public PanelContainer()
         {
             this.InitializeComponent();
 
-            PanelStack = new List<IPanel>();
+            PanelStack = new List<PanelBase>();
         }
 
         public ScreenMode CurrentScreenMode()
@@ -113,7 +120,7 @@ namespace SutoNavigation.NavigationService
 
         private bool? GoBack_Internal()
         {
-            IPanel leavingPanel = null;
+            PanelBase leavingPanel = null;
             lock (PanelStack)
             {
                 //TODO: Handle if transition is running
@@ -134,7 +141,7 @@ namespace SutoNavigation.NavigationService
                 //// Remove the panel, use the index or we will remove the wrong one!
                 //PanelStack.RemoveAt(PanelStack.Count - 1);
 
-                if (leavingPanel.Transition.Type != PanelTransitionType.None)
+                if (leavingPanel.Transition != null)
                 {
                     // TODO: Save animation state when navigating to to use here, or allow custom transition from outside
                     transitionStoryboard?.Stop();
@@ -155,23 +162,29 @@ namespace SutoNavigation.NavigationService
 
         public bool Navigate(Type panelType, Dictionary<string, object> arguments = null, PanelTransition transition = null)
         {
-            var panel = (IPanel)Activator.CreateInstance(panelType);
+            var panel = (PanelBase)Activator.CreateInstance(panelType);
+            panel.Transition = transition;
             panel.PanelSetup(this, arguments);
-            if (transition != null)
-                panel.Transition = transition;
             SetUpPanelAsControl(ref panel);
             return true;
         }
 
-        private void SetUpPanelAsControl(ref IPanel panel)
+        private void SetUpPanelAsControl(ref PanelBase panel)
         {
+            var transform = panel.RenderTransform as CompositeTransform;
+            if (transform == null)
+            {
+                transform = new CompositeTransform();
+                panel.RenderTransform = transform;
+            }
 
             transitionStoryboard?.Stop();
-            SetupTransition(ref panel);
+            if (panel.Transition != null)
+                SetupTransition(ref panel);
             PanelStack.Add(panel);
 
-            this.root.Children.Add((UserControl)panel);
-            if (panel.Transition.Type != PanelTransitionType.None)
+            this.root.Children.Add(panel);
+            if (panel.Transition != null)
             {
                 transitionStoryboard.Begin();
                 state = State.Transiting;
@@ -182,87 +195,18 @@ namespace SutoNavigation.NavigationService
             }
             UpdateBackButton();
         }
-        UserControl currentPanel;
-        UserControl lastPanel;
-        private void SetupTransition(ref IPanel panel, bool isBack = false)
+
+        private void SetupTransition(ref PanelBase panel, bool isBack = false)
         {
-            currentPanel = (UserControl)panel;
-            var transform = currentPanel.RenderTransform as CompositeTransform;
-
-            if (transform == null)
-            {
-                transform = new CompositeTransform();
-                currentPanel.RenderTransform = transform;
-            }
-
             transitionStoryboard = new Storyboard();
 
-            DoubleAnimation animation = new DoubleAnimation();
-
-            animation.Duration = panel.Transition.Duration;
-            if (panel.Transition.EasingFunction != null)
-                animation.EasingFunction = panel.Transition.EasingFunction;
-            else
-                animation.EasingFunction = isBack ? new QuadraticEase() { EasingMode = EasingMode.EaseOut } : new QuadraticEase() { EasingMode = EasingMode.EaseOut };
-            string propertyName = "";
-            double newPosition = 0;
-            switch (panel.Transition.Type)
+            panel.Transition.SetInitialState(ref panel, isBack);
+            var animations = panel.Transition.CreateAnimation(ref panel, isBack);
+            foreach (var item in animations)
             {
-                case PanelTransitionType.FadeIn:
-                    currentPanel.Opacity = isBack ? 1 : 0;
-                    animation.From = currentPanel.Opacity;
-                    animation.To = isBack ? 0 : 1;
-                    Storyboard.SetTarget(animation, currentPanel);
-                    Storyboard.SetTargetProperty(animation, "Opacity");
-                    break;
-                case PanelTransitionType.SlideIn:
-                case PanelTransitionType.BounceIn:
-                    propertyName = GetTransitionProperty(panel.Transition.Direction);
-
-                    newPosition = GetSlideTransitionProperty(panel.Transition.Direction);
-                    //animation.From = isBack ? 0 : newPosition;
-                    animation.To = !isBack ? 0 : newPosition;
-                    Storyboard.SetTarget(animation, transform);
-                    Storyboard.SetTargetProperty(animation, propertyName);
-                    break;
-                case PanelTransitionType.InstagramLike:
-                    propertyName = GetTransitionProperty(TransitionDirection.RightToLeft);
-                    newPosition = GetSlideTransitionProperty(TransitionDirection.RightToLeft);
-                    animation.From = isBack ? transform.TranslateX : newPosition;
-                    animation.To = !isBack ? 0 : newPosition;
-                    Storyboard.SetTarget(animation, transform);
-                    Storyboard.SetTargetProperty(animation, propertyName);
-
-
-                    break;
-
-                default:
-                    break;
+                transitionStoryboard.Children.Add(item);
             }
-            transitionStoryboard.Children.Add(animation);
-
-            if (panel.Transition.Type == PanelTransitionType.InstagramLike)
-            {
-                if (PanelStack.Count > 0)
-                {
-                    lastPanel = (isBack ? PanelStack[PanelStack.Count - 2] : PanelStack.Last()) as UserControl;
-                    var lastTransform = lastPanel.RenderTransform as CompositeTransform;
-
-                    DoubleAnimation lastAnimation = new DoubleAnimation();
-                    //lastAnimation.From = isBack ? -500 :0;
-                    lastAnimation.To = isBack ? 0 : -FeedbackOffset;
-                    lastAnimation.Duration = panel.Transition.Duration;
-                    lastAnimation.EasingFunction = !isBack ? new QuadraticEase() { EasingMode = EasingMode.EaseOut } : new QuadraticEase() { EasingMode = EasingMode.EaseIn };
-                    Storyboard.SetTarget(lastAnimation, lastTransform);
-                    Storyboard.SetTargetProperty(lastAnimation, propertyName);
-                    transitionStoryboard.Children.Add(lastAnimation);
-                }
-                
-                if (isBack)
-                    UnregisterManipulation(ref currentPanel);
-                else
-                    RegisterManipulation(ref currentPanel);            
-            }
+            
 
             if (isBack)
                 transitionStoryboard.Completed += PanelBackAnimation_Completed;
@@ -273,92 +217,6 @@ namespace SutoNavigation.NavigationService
 
         }
 
-        private void RegisterManipulation(ref UserControl userControl)
-        {
-            userControl.ManipulationDelta += UserControl_ManipulationDelta;
-            userControl.ManipulationCompleted += UserControl_ManipulationCompleted;
-        }
-
-        private void UnregisterManipulation(ref UserControl userControl)
-        {
-            userControl.ManipulationDelta -= UserControl_ManipulationDelta;
-            userControl.ManipulationCompleted -= UserControl_ManipulationCompleted;
-        }
-
-        private void UserControl_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
-        {
-            var transform = currentPanel.RenderTransform as CompositeTransform;
-            if (transform.TranslateX < FeedbackOffset)
-            {
-                //Move it back to 0
-
-                DoubleAnimation animation = new DoubleAnimation();
-                animation.To = 0;
-                animation.Duration = TimeSpan.FromMilliseconds(200);
-                QuadraticEase ease = new QuadraticEase();
-                ease.EasingMode = EasingMode.EaseOut;
-                animation.EasingFunction = ease;
-
-                Storyboard storyboard = new Storyboard();
-                Storyboard.SetTarget(animation, transform);
-                Storyboard.SetTargetProperty(animation, "TranslateX");
-                storyboard.Children.Add(animation);
-                storyboard.Begin();
-
-            }
-            else
-            {
-                //Invoke back event.
-                GoBack();
-            }
-        }
-
-        private void UserControl_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            var transform = currentPanel.RenderTransform as CompositeTransform;
-            var newX = transform.TranslateX;
-            newX += e.Delta.Translation.X;
-            if (newX < 0)
-                newX = 0;
-            else
-            {
-                var lastTransform = lastPanel.RenderTransform as CompositeTransform;
-
-                lastTransform.TranslateX = (1 - newX / this.RenderSize.Width) * -FeedbackOffset;
-            }
-
-            transform.TranslateX = newX;
-        }
-
-        private double GetSlideTransitionProperty(TransitionDirection direction)
-        {
-            switch (direction)
-            {
-                case TransitionDirection.BottomToTop:
-                    return this.RenderSize.Height;
-                case TransitionDirection.TopToBottom:
-                    return -this.RenderSize.Height;
-                case TransitionDirection.LeftToRight:
-                    return -this.RenderSize.Width;
-                case TransitionDirection.RightToLeft:
-                    return this.RenderSize.Width;
-            }
-            return this.RenderSize.Width;
-        }
-
-        private string GetTransitionProperty(TransitionDirection direction)
-        {
-            switch (direction)
-            {
-                case TransitionDirection.BottomToTop:
-                case TransitionDirection.TopToBottom:
-                    return "TranslateY";
-                case TransitionDirection.LeftToRight:
-                case TransitionDirection.RightToLeft:
-                    return "TranslateX";
-            }
-            return "TranslateX";
-        }
 
         public Task<double> SetStatusBar(Color? color = default(Color?), double opacity = 1)
         {
@@ -390,9 +248,7 @@ namespace SutoNavigation.NavigationService
             FireOnNavigateFrom(leavingPanel);
             FireOnCleanupPanel(leavingPanel);
             PanelStack.RemoveAt(PanelStack.Count - 1);
-
-            currentPanel = PanelStack.Last() as UserControl;
-            root.Children.Remove((UserControl)leavingPanel);
+            root.Children.Remove(leavingPanel);
 
             UpdateBackButton();
             state = State.Idle;
@@ -501,5 +357,13 @@ namespace SutoNavigation.NavigationService
         }
 
         #endregion
+    }
+
+    internal enum State
+    {
+        Idle,
+        FadingIn,
+        FadingOut,
+        Transiting,
     }
 }

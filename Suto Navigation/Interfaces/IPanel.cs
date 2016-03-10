@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SutoNavigation.Transitions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ namespace SutoNavigation.NavigationService.Interfaces
 {
     public interface IPanel
     {
+        IPanelHost host { get; set; }
         PanelTransition Transition { get; set; }
         /// <summary>
         /// Fired when the panel is being created.

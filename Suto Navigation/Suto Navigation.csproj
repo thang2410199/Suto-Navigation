@@ -113,12 +113,16 @@
     <Compile Include="Helpers\SmartWeakEvent.cs" />
     <Compile Include="Interfaces\IPanel.cs" />
     <Compile Include="Interfaces\IPanelHost.cs" />
-    <Compile Include="Interfaces\PanelTransition.cs" />
+    <Compile Include="Transitions\InstagramPanelTransition.cs" />
+    <Compile Include="Transitions\SlideInTransition.cs" />
+    <Compile Include="Transitions\PanelTransition.cs" />
     <Compile Include="PanelBase.cs" />
     <Compile Include="PanelContainer.xaml.cs">
       <DependentUpon>PanelContainer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Transitions\FadeInTransition.cs" />
+    <Compile Include="Transitions\TransitionKeyPairValue.cs" />
     <EmbeddedResource Include="Properties\Suto_Navigation.rd.xml" />
   </ItemGroup>
   <ItemGroup>
