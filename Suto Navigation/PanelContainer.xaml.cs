@@ -200,7 +200,6 @@ namespace SutoNavigation.NavigationService
             {
                 FireOnNavigateComplete();
             }
-            UpdateBackButton();
         }
 
         private void SetupTransition(ref PanelBase panel, bool isBack = false)
