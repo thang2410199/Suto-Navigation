@@ -34,6 +34,7 @@ namespace Suto_Navigation.Sample
             panelContainer = new PanelContainer();
             panelContainer.MinimumThresshold = 1;
             panelContainer.Navigate(typeof(ProfilePanel));
+            //Comment below line to use Nomarl mode, which create new Panel when navigating
             panelContainer.OperationMode = OperationMode.Recycle;
             root.Children.Add(panelContainer);
 

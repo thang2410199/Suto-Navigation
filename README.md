@@ -34,3 +34,8 @@ Navigate between Panel:
 ####Create custom transition:
 
 Create class extend from `PanelTransition`, overwrite `SetInitialState` and `CreateAnimation`, see the sample for more information
+
+####Use recycle mode
+
+Set OperationMode to Recycle
+`panelContainer.OperationMode = OperationMode.Recycle;`
