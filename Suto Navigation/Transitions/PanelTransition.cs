@@ -17,6 +17,11 @@ namespace SutoNavigation.Transitions
         public TimeSpan Duration { get; set; }
         public EasingFunctionBase EasingFunction { get; set; }
 
+        /// <summary>
+        /// called everytime before the transition setup happend
+        /// </summary>
+        /// <param name="userControl"></param>
+        /// <param name="isBack"></param>
         public virtual void SetInitialState(ref PanelBase userControl, bool isBack)
         {
 
@@ -57,6 +62,10 @@ namespace SutoNavigation.Transitions
             return nameof(CompositeTransform.TranslateX);
         }
 
+        /// <summary>
+        /// Called when the panel is reused for difference transition, clear thing up here
+        /// </summary>
+        /// <param name="userControl"></param>
         public virtual void ResetOnReUse(ref PanelBase userControl)
         {
             

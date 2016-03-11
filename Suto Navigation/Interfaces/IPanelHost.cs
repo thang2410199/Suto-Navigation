@@ -17,6 +17,8 @@ namespace SutoNavigation.NavigationService.Interfaces
         /// </summary>
         int MinimumThresshold { get; set; }
 
+        bool AutoMemoryManagementEnabled { get; }
+
         /// <summary>
         /// Store all panel in the navigation stack
         /// </summary>
@@ -73,5 +75,21 @@ namespace SutoNavigation.NavigationService.Interfaces
         /// <param name="disableOcclusion"></param>
         /// <returns></returns>
         Task<double> SetStatusBar(Color? color = null, double opacity = 1);
+    }
+
+    /// <summary>
+    /// Indicates the current memory pressure state of the app.
+    ///
+    /// On none we will do nothing, we are good.
+    /// On low pressure we fire event when adding new panel
+    /// On medium we fire event when adding new panel, remove low importance panels and fire event for each of them
+    /// On high we fire event when adding new panel, remove normal or low importance panels and fire event for each of them
+    /// </summary>
+    public enum MemoryPressureStates
+    {
+        None = 0,
+        Low = 1,
+        Medium = 2,
+        HighNoAllocations = 3
     }
 }

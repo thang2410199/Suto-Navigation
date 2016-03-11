@@ -46,5 +46,20 @@ namespace SutoNavigation.NavigationService.Interfaces
         /// while the panel isn't visible.
         /// </summary>
         void OnReduceMemory();
+
+        /// <summary>
+        /// Defined the likely that panel will be clear when memory in more pressure state.
+        /// Low importance panel will be cleared first when memory start growing large.
+        /// When memory is critical, Normal importance panels will be cleared.
+        /// High importance panel will not be cleared under any situation
+        /// </summary>
+        Importaness Importaness { get; set; }
+    }
+
+    public enum Importaness
+    {
+        Low,
+        Normal,
+        High
     }
 }

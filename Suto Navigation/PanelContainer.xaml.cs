@@ -20,6 +20,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using SutoNavigation.Transitions;
+using SutoNavigation.Interfaces;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -28,6 +29,17 @@ namespace SutoNavigation.NavigationService
     public sealed partial class PanelContainer : UserControl, IPanelHost
     {
         public int MinimumThresshold { get; set; } = 0;
+
+        bool _AutoMemoryManagementEnabled = false;
+        public bool AutoMemoryManagementEnabled
+        {
+            get
+            {
+                return _AutoMemoryManagementEnabled;
+            }
+        }
+
+        IMemoryWatcher memoryWatcher;
 
         public Size Size
         {
@@ -75,6 +87,12 @@ namespace SutoNavigation.NavigationService
             this.InitializeComponent();
 
             PanelStack = new List<PanelBase>();
+        }
+
+        public void EnableAutoMemoryManagement(IMemoryWatcher memWatcher)
+        {
+            _AutoMemoryManagementEnabled = true;
+            memoryWatcher = memWatcher;
         }
 
         public ScreenMode CurrentScreenMode()
@@ -170,7 +188,7 @@ namespace SutoNavigation.NavigationService
         public bool Navigate(Type panelType, Dictionary<string, object> arguments = null, PanelTransition transition = null)
         {
             PanelBase panel = null;
-            switch(OperationMode)
+            switch (OperationMode)
             {
                 case OperationMode.Normal:
                     panel = (PanelBase)Activator.CreateInstance(panelType);
@@ -179,7 +197,7 @@ namespace SutoNavigation.NavigationService
 
                     //Find existing panel
                     var oldPanel = this.PanelStack.FirstOrDefault(p => p.GetType() == panelType);
-                    if(oldPanel != null)
+                    if (oldPanel != null)
                     {
                         //Reset the animation applied to realated panel
                         oldPanel.Transition.ResetOnReUse(ref oldPanel);
@@ -201,7 +219,7 @@ namespace SutoNavigation.NavigationService
                     panel = (PanelBase)Activator.CreateInstance(panelType);
                     break;
             }
-            
+
 
             panel.Transition = transition;
             PanelStack.Add(panel);
@@ -222,7 +240,7 @@ namespace SutoNavigation.NavigationService
             //transitionStoryboard?.Stop();
             if (panel.Transition != null)
                 SetupTransition(ref panel);
-            
+
             this.root.Children.Add(panel);
             if (panel.Transition != null)
             {

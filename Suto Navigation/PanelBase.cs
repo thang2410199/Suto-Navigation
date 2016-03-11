@@ -15,6 +15,11 @@ namespace SutoNavigation.NavigationService
         public IPanelHost Host { get; set; }
 
         /// <summary>
+        /// Default Importaness is Normal
+        /// </summary>
+        public Importaness Importaness { get; set; } = Importaness.Normal;
+
+        /// <summary>
         /// Transition data use when navigate to and from. Default behaviour is try to revert the transition
         /// if is assigned to null value, no transition will play
         /// </summary>
