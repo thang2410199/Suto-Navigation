@@ -11,7 +11,7 @@
     d:DesignWidth="400">
 
     <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}">
-
         <Image Source="https://farm2.staticflickr.com/1557/25511858145_0a71b900c3_b.jpg"/>
+        <Button Content="Navigate loop" Click="Button_Click"/>
     </Grid>
 </suto:PanelBase>

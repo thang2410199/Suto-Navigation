@@ -12,18 +12,18 @@ using Windows.UI.Xaml.Media.Animation;
 
 namespace SutoNavigation.Transitions
 {
-    public class InstagramPanelTransition : PanelTransition
+    public class InstagramTransition : PanelTransition
     {
         private PanelBase currentPanel;
         private PanelBase lastPanel;
 
-        public InstagramPanelTransition()
+        public InstagramTransition()
         {
             Direction = TransitionDirection.RightToLeft;
             Duration = TimeSpan.FromMilliseconds(400);
         }
 
-        public InstagramPanelTransition(TimeSpan Duration)
+        public InstagramTransition(TimeSpan Duration)
         {
             Direction = TransitionDirection.RightToLeft;
             this.Duration = Duration;
@@ -70,7 +70,7 @@ namespace SutoNavigation.Transitions
             var stack = userControl.Host.PanelStack;
             if (stack.Count > 0)
             {
-                lastPanel = (isBack ? stack[stack.Count - 2] : stack.Last());
+                lastPanel = stack[stack.Count - 2];
                 var lastTransform = lastPanel.RenderTransform as CompositeTransform;
 
                 DoubleAnimation lastAnimation = new DoubleAnimation();
@@ -93,6 +93,13 @@ namespace SutoNavigation.Transitions
             animations.Add(animation);
 
             return animations;
+        }
+
+        public override void ResetOnReUse(ref PanelBase userControl)
+        {
+            var lastTransform = lastPanel.RenderTransform as CompositeTransform;
+            lastTransform.TranslateX = lastTransform.TranslateY = 0;
+            UnregisterManipulation(ref userControl);
         }
 
         private void RegisterManipulation(ref PanelBase userControl)

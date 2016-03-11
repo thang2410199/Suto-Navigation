@@ -56,6 +56,11 @@ namespace SutoNavigation.Transitions
             }
             return nameof(CompositeTransform.TranslateX);
         }
+
+        public virtual void ResetOnReUse(ref PanelBase userControl)
+        {
+            
+        }
     }
 
     public enum TransitionDirection

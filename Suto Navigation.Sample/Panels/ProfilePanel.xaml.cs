@@ -17,7 +17,7 @@ namespace Suto_Navigation.Sample.Panes
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            this.Host.Navigate(typeof(LoginPanel), null, new InstagramPanelTransition(TimeSpan.FromSeconds(1)));
+            this.Host.Navigate(typeof(LoginPanel), null, new InstagramTransition(TimeSpan.FromSeconds(1)));
         }
     }
 }

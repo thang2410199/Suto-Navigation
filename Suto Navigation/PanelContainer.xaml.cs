@@ -169,8 +169,42 @@ namespace SutoNavigation.NavigationService
 
         public bool Navigate(Type panelType, Dictionary<string, object> arguments = null, PanelTransition transition = null)
         {
-            var panel = (PanelBase)Activator.CreateInstance(panelType);
+            PanelBase panel = null;
+            switch(OperationMode)
+            {
+                case OperationMode.Normal:
+                    panel = (PanelBase)Activator.CreateInstance(panelType);
+                    break;
+                case OperationMode.Recycle:
+
+                    //Find existing panel
+                    var oldPanel = this.PanelStack.FirstOrDefault(p => p.GetType() == panelType);
+                    if(oldPanel != null)
+                    {
+                        //Reset the animation applied to realated panel
+                        oldPanel.Transition.ResetOnReUse(ref oldPanel);
+
+                        //Move oldPanel to the last in Stack.
+                        PanelStack.Remove(oldPanel);
+
+                        //Remove it from Grid to avoid duplication as it will be added later
+                        root.Children.Remove(oldPanel);
+
+                        panel = oldPanel;
+                    }
+                    else
+                    {
+                        panel = (PanelBase)Activator.CreateInstance(panelType);
+                    }
+                    break;
+                default:
+                    panel = (PanelBase)Activator.CreateInstance(panelType);
+                    break;
+            }
+            
+
             panel.Transition = transition;
+            PanelStack.Add(panel);
             panel.PanelSetup(this, arguments);
             SetUpPanelAsControl(ref panel);
             return true;
@@ -188,8 +222,7 @@ namespace SutoNavigation.NavigationService
             //transitionStoryboard?.Stop();
             if (panel.Transition != null)
                 SetupTransition(ref panel);
-            PanelStack.Add(panel);
-
+            
             this.root.Children.Add(panel);
             if (panel.Transition != null)
             {

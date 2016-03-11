@@ -34,7 +34,7 @@ namespace Suto_Navigation.Sample
             panelContainer = new PanelContainer();
             panelContainer.MinimumThresshold = 1;
             panelContainer.Navigate(typeof(ProfilePanel));
-
+            panelContainer.OperationMode = OperationMode.Recycle;
             root.Children.Add(panelContainer);
 
 
@@ -49,6 +49,11 @@ namespace Suto_Navigation.Sample
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+        }
+
+        private void Update_Panel_Count(object sender, RoutedEventArgs e)
+        {
+            StackCount_TB.Text = "Number of panel in stack: " + panelContainer.PanelStack.Count;
         }
     }
 }

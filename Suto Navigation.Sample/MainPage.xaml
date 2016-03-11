@@ -7,8 +7,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" xmlns:suto="using:SutoNavigation.NavigationService">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" x:Name="root">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <!--Alternative way to use container-->
         <!--<suto:PanelContainer/>-->
+
+        <Grid x:Name="root"></Grid>
+
+        <TextBlock VerticalAlignment="Top" Text="Number of panel in stack" Name="StackCount_TB"/>
+
+        <Button Click="Update_Panel_Count" Content="update" VerticalAlignment="Bottom"/>
     </Grid>
 </Page>

@@ -38,7 +38,7 @@ namespace SutoNavigation.Transitions
             if(!isBack)
             {
                 var render = userControl.RenderTransform as CompositeTransform;
-                var newPosition = base.GetSlideTransitionProperty(Direction, (userControl as IPanel).Host);
+                var newPosition = base.GetSlideTransitionProperty(Direction, userControl.Host);
                 switch(Direction)
                 {
                     case TransitionDirection.RightToLeft:
@@ -55,7 +55,7 @@ namespace SutoNavigation.Transitions
 
         public override List<Timeline> CreateAnimation(ref PanelBase userControl, bool isBack)
         {
-            var newPosition = base.GetSlideTransitionProperty(Direction, (userControl as IPanel).Host);
+            var newPosition = base.GetSlideTransitionProperty(Direction, userControl.Host);
             DoubleAnimation animation = new DoubleAnimation();
             animation.Duration = Duration;
             animation.EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut };
