@@ -4,7 +4,9 @@ Suto Navigation is a navigation service for UWP app which leaves minimal memory 
 
 ####Basic usage
 
-VIDEO IN ACTION: https://www.youtube.com/watch?v=Y3jHLENmSdo
+Difference transition: https://www.youtube.com/watch?v=Y3jHLENmSdo
+
+![](https://media.giphy.com/media/yhcpSeCJHDhTi/giphy.gif)
 
 Include the following line in your XAML page.
 
