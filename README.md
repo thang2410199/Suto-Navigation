@@ -60,6 +60,6 @@ Use the following line to enable memory management:
 
 `panelContainer.EnableAutoMemoryManagement(new BasicMemoryWatcher());`
 
-To create custom strategy for detect low memory, implement IMemoryWatcher. Create custom implementation of IMemoryReactor.
+To create custom strategy for detect and reactor to low memory, implement `IMemoryWatcher`. Create custom implementation of `IMemoryReactor`.
 
 `panelContainer.EnableAutoMemoryManagement(new BasicMemoryWatcher(), new CustomMemoryReactor());`
