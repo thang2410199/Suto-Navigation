@@ -44,3 +44,22 @@ Set OperationMode to Recycle
 `panelContainer.OperationMode = OperationMode.Recycle;`
 
 and overwrite `ResetOnReUse` method of `PanelTransition`
+
+####Memory management
+
+Your application can run out of memory sometime, you can let Suto Navigation automatically clear panel in the stack for you.
+
+Rules for built-in memory management:
+
+- Never clear current panel
+- Never clear High Importaness panel
+- When memory is medium (85% of available memory pool), panels with Low Importaness will be cleared
+- When memory is hight ( > 85% of available memory pool), panels with Low and Normal Importaness will be cleared
+
+Use the following line to enable memory management:
+
+`panelContainer.EnableAutoMemoryManagement(new BasicMemoryWatcher());`
+
+To create custom strategy for detect low memory, implement IMemoryWatcher. Create custom implementation of IMemoryReactor.
+
+`panelContainer.EnableAutoMemoryManagement(new BasicMemoryWatcher(), new CustomMemoryReactor());`

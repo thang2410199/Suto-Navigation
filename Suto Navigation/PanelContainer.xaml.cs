@@ -26,7 +26,7 @@ using SutoNavigation.Interfaces;
 
 namespace SutoNavigation.NavigationService
 {
-    public sealed partial class PanelContainer : UserControl, IPanelHost
+    public sealed partial class PanelContainer : UserControl, IPanelHost, IMemoryReactor
     {
         public int MinimumThresshold { get; set; } = 0;
 
@@ -40,6 +40,7 @@ namespace SutoNavigation.NavigationService
         }
 
         IMemoryWatcher memoryWatcher;
+        IMemoryReactor memoryReactor;
 
         public Size Size
         {
@@ -93,11 +94,21 @@ namespace SutoNavigation.NavigationService
         {
             _AutoMemoryManagementEnabled = true;
             memoryWatcher = memWatcher;
-            memoryWatcher.OnMemoryNeeded += MemoryWatcher_OnMemoryNeeded;
+            memoryReactor = this;
+            memoryWatcher.OnMemoryNeeded += memoryReactor.OnMemoryNeeded;
             memoryWatcher.StartWatch();
         }
 
-        private void MemoryWatcher_OnMemoryNeeded(object sender, MemoryReportArgs e)
+        public void EnableAutoMemoryManagement(IMemoryWatcher memWatcher, IMemoryReactor reactor)
+        {
+            _AutoMemoryManagementEnabled = true;
+            memoryWatcher = memWatcher;
+            memoryReactor = reactor;
+            memoryWatcher.OnMemoryNeeded += memoryReactor.OnMemoryNeeded;
+            memoryWatcher.StartWatch();
+        }
+
+        void IMemoryReactor.OnMemoryNeeded(object sender, MemoryReportArgs e)
         {
             //return if Low or None as we dont need to do anything
             if (e.CurrentPressure == (MemoryPressureStates.Low | MemoryPressureStates.None))
@@ -138,7 +149,7 @@ namespace SutoNavigation.NavigationService
         public void DisableAutoMemoryManagement()
         {
             _AutoMemoryManagementEnabled = false;
-            memoryWatcher.OnMemoryNeeded -= MemoryWatcher_OnMemoryNeeded;
+            memoryWatcher.OnMemoryNeeded -= memoryReactor.OnMemoryNeeded;
             memoryWatcher.StopWatch();
         }
 
