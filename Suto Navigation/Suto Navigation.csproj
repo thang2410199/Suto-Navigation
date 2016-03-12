@@ -114,6 +114,8 @@
     <Compile Include="Interfaces\IMemoryWatcher.cs" />
     <Compile Include="Interfaces\IPanel.cs" />
     <Compile Include="Interfaces\IPanelHost.cs" />
+    <Compile Include="Services\BasicMemoryWatcher.cs" />
+    <Compile Include="Transitions\BasicTransition.cs" />
     <Compile Include="Transitions\InstagramTransition.cs" />
     <Compile Include="Transitions\SlideInTransition.cs" />
     <Compile Include="Transitions\PanelTransition.cs" />

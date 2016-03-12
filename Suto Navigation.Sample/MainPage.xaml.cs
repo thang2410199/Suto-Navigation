@@ -1,4 +1,5 @@
 ﻿using Suto_Navigation.Sample.Panes;
+using SutoNavigation;
 using SutoNavigation.NavigationService;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,7 @@ namespace Suto_Navigation.Sample
             panelContainer.Navigate(typeof(ProfilePanel));
             //Comment below line to use Nomarl mode, which create new Panel when navigating
             panelContainer.OperationMode = OperationMode.Recycle;
+            panelContainer.EnableAutoMemoryManagement(new BasicMemoryWatcher());
             root.Children.Add(panelContainer);
 
 
@@ -55,6 +57,11 @@ namespace Suto_Navigation.Sample
         private void Update_Panel_Count(object sender, RoutedEventArgs e)
         {
             StackCount_TB.Text = "Number of panel in stack: " + panelContainer.PanelStack.Count;
+        }
+
+        private void Fire_Low_Mem(object sender, RoutedEventArgs e)
+        {
+            panelContainer.RequestFreeMemory(new MemoryReportArgs(SutoNavigation.Interfaces.MemoryPressureStates.Medium));
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using SutoNavigation.NavigationService.Interfaces;
+﻿using SutoNavigation.Interfaces;
+using SutoNavigation.NavigationService.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,26 @@ namespace SutoNavigation
     /// </summary>
     public class MemoryReportArgs : EventArgs
     {
-        public MemoryPressureStates CurrentPressure;
-        public MemoryPressureStates LastPressure;
+        public MemoryPressureStates CurrentPressure
+        {
+            get; set;
+        } = MemoryPressureStates.None;
+        public MemoryPressureStates LastPressure
+        {
+            get; set;
+        } = MemoryPressureStates.None;
         public ulong CurrentMemoryUsage;
         public ulong AvailableMemory;
         public double UsagePercentage;
+
+        public MemoryReportArgs(MemoryPressureStates state)
+        {
+            CurrentPressure = state;
+        }
+
+        public MemoryReportArgs()
+        {
+
+        }
     }
 }

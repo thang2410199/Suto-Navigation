@@ -93,6 +93,58 @@ namespace SutoNavigation.NavigationService
         {
             _AutoMemoryManagementEnabled = true;
             memoryWatcher = memWatcher;
+            memoryWatcher.OnMemoryNeeded += MemoryWatcher_OnMemoryNeeded;
+            memoryWatcher.StartWatch();
+        }
+
+        private void MemoryWatcher_OnMemoryNeeded(object sender, MemoryReportArgs e)
+        {
+            //return if Low or None as we dont need to do anything
+            if (e.CurrentPressure == (MemoryPressureStates.Low | MemoryPressureStates.None))
+                return;
+            List<PanelBase> panelToClear = null;
+            Importaness target = Importaness.Low;
+            //react to current memory state
+            switch (e.CurrentPressure)
+            {
+                case MemoryPressureStates.Medium:
+                    target = Importaness.Low;
+                    break;
+                case MemoryPressureStates.High:
+                    target = Importaness.Low | Importaness.Normal;
+                    break;
+            }
+
+            //Never clear current pannel
+            panelToClear = PanelStack.Take(PanelStack.Count - 1).Where(p => p.Importaness == target).ToList();
+            var size = panelToClear.Count;
+            if (size > 0)
+            {
+                for (int i = 0; i < size; i++)
+                {
+                    var panel = panelToClear[i];
+                    FireOnReduceMemory(panel);
+                    panel.Transition.ResetOnReUse(ref panel);
+
+                    //Remove from stack
+                    PanelStack.Remove(panel);
+
+                    //Remove from visual
+                    root.Children.Remove(panel);
+                }
+            }
+        }
+
+        public void DisableAutoMemoryManagement()
+        {
+            _AutoMemoryManagementEnabled = false;
+            memoryWatcher.OnMemoryNeeded -= MemoryWatcher_OnMemoryNeeded;
+            memoryWatcher.StopWatch();
+        }
+
+        public void RequestFreeMemory(MemoryReportArgs e)
+        {
+            memoryWatcher.FireMemoryNeeded(e);
         }
 
         public ScreenMode CurrentScreenMode()
@@ -166,7 +218,7 @@ namespace SutoNavigation.NavigationService
                 //// Remove the panel, use the index or we will remove the wrong one!
                 //PanelStack.RemoveAt(PanelStack.Count - 1);
 
-                if (leavingPanel.Transition != null)
+                if (leavingPanel.Transition.GetType() != typeof(BasicTransition))
                 {
                     // TODO: Save animation state when navigating to to use here, or allow custom transition from outside
                     //transitionStoryboard?.Stop();
@@ -220,8 +272,8 @@ namespace SutoNavigation.NavigationService
                     break;
             }
 
-
-            panel.Transition = transition;
+            if (transition != null)
+                panel.Transition = transition;
             PanelStack.Add(panel);
             panel.PanelSetup(this, arguments);
             SetUpPanelAsControl(ref panel);
@@ -238,11 +290,11 @@ namespace SutoNavigation.NavigationService
             }
 
             //transitionStoryboard?.Stop();
-            if (panel.Transition != null)
+            if (panel.Transition.GetType() != typeof(BasicTransition))
                 SetupTransition(ref panel);
 
             this.root.Children.Add(panel);
-            if (panel.Transition != null)
+            if (panel.Transition.GetType() != typeof(BasicTransition))
             {
                 transitionStoryboard.Begin();
                 state = NavigationState.Transiting;

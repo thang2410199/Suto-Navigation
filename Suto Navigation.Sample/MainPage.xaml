@@ -16,5 +16,7 @@
         <TextBlock VerticalAlignment="Top" Text="Number of panel in stack" Name="StackCount_TB"/>
 
         <Button Click="Update_Panel_Count" Content="update" VerticalAlignment="Bottom"/>
+
+        <Button Click="Fire_Low_Mem" Content="simulate low memory" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
     </Grid>
 </Page>

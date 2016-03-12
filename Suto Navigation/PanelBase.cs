@@ -26,7 +26,7 @@ namespace SutoNavigation.NavigationService
         public PanelTransition Transition
         {
             get; set;
-        }
+        } = new BasicTransition();
 
         public virtual void OnCleanupPanel()
         {

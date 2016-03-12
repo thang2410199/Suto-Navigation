@@ -1,6 +1,6 @@
 #Suto Navigation
 
-Suto Navigation is a navigation service for UWP app which leaves minimal memory footprint and support custom transition. Instagram like navigation. Support for Recyle and Low Memory mode on the way.
+Open source library is a navigation service for UWP which leaves minimal memory footprint and support custom transitions such as Instagram like. Support for element Recycling and react to low memory.
 
 ####Basic usage
 
@@ -29,15 +29,18 @@ Create `UserControl` base on `PanelBase`
 
 Navigate between Panel:
 
-`this.Host.Navigate(typeof(ProviderPanel), null, new InstagramPanelTransition());`
+`this.Host.Navigate(typeof(ProviderPanel), null, new InstagramTransition());`
 
 `this.Host.GoBack()`
 
 ####Create custom transition:
 
-Create class extend from `PanelTransition`, overwrite `SetInitialState` and `CreateAnimation`, see the sample for more information
+Create class extend from `PanelTransition`, overwrite `SetInitialState` and `CreateAnimation`, see the sample for more information.
 
 ####Use recycle mode
 
 Set OperationMode to Recycle
+
 `panelContainer.OperationMode = OperationMode.Recycle;`
+
+and overwrite `ResetOnReUse` method of `PanelTransition`
