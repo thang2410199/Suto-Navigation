@@ -489,6 +489,7 @@ namespace SutoNavigation.NavigationService
 
     public enum OperationMode
     {
+        Auto,
         Normal,
         Recycle,
     }
