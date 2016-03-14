@@ -12,19 +12,18 @@ using Windows.UI.Xaml.Media.Animation;
 
 namespace SutoNavigation.Transitions
 {
-    [Obsolete("will be removed soon, use ParallaxSlideTransition instead")]
-    public class InstagramTransition : PanelTransition
+    public class ParallaxSlideTransition : PanelTransition
     {
         private PanelBase currentPanel;
         private PanelBase lastPanel;
 
-        public InstagramTransition()
+        public ParallaxSlideTransition()
         {
             Direction = TransitionDirection.RightToLeft;
             Duration = TimeSpan.FromMilliseconds(400);
         }
 
-        public InstagramTransition(TimeSpan Duration, TransitionDirection direction = TransitionDirection.RightToLeft)
+        public ParallaxSlideTransition(TimeSpan Duration, TransitionDirection direction = TransitionDirection.RightToLeft)
         {
             Direction = direction;
             this.Duration = Duration;
