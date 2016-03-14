@@ -248,12 +248,21 @@ namespace SutoNavigation.NavigationService
             return true;
         }
 
-        public bool Navigate(Type panelType, Dictionary<string, object> arguments = null, PanelTransition transition = null)
+        public bool Navigate(Type panelType, Dictionary<string, object> arguments = null, NavigationOption options = null)
         {
+            if (options == null)
+                options = NavigationOption.Builder().Build();
             PanelBase panel = null;
-            switch (OperationMode)
+
+            //if not set OperationMode, use global setting
+            var operationMode = OperationMode;
+            if (options.OperationMode != OperationMode.Auto)
+                operationMode = options.OperationMode;
+
+            switch (operationMode)
             {
                 case OperationMode.Normal:
+                    // if type is normal create new instance of panel
                     panel = (PanelBase)Activator.CreateInstance(panelType);
                     break;
                 case OperationMode.Recycle:
@@ -275,6 +284,7 @@ namespace SutoNavigation.NavigationService
                     }
                     else
                     {
+                        // if panel is null then create new one
                         panel = (PanelBase)Activator.CreateInstance(panelType);
                     }
                     break;
@@ -283,8 +293,8 @@ namespace SutoNavigation.NavigationService
                     break;
             }
 
-            if (transition != null)
-                panel.Transition = transition;
+            if (options.Transition != null)
+                panel.Transition = options.Transition;
             PanelStack.Add(panel);
             panel.PanelSetup(this, arguments);
             SetUpPanelAsControl(ref panel);

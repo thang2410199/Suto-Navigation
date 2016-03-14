@@ -48,7 +48,7 @@ namespace SutoNavigation.NavigationService.Interfaces
         /// <param name="panelId">A unique identifier for the panel, the id should be able to differeincae between two panels of the same type</param>
         /// <param name="arguments">Arguments to be sent to the panel</param>
         /// <returns></returns>
-        bool Navigate(Type panelType, Dictionary<string, object> arguments = null, PanelTransition transition = null);
+        bool Navigate(Type panelType, Dictionary<string, object> arguments = null, NavigationOption options = null);
 
         /// <summary>
         /// Called to navigate back to the last panel.

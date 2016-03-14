@@ -1,4 +1,5 @@
-﻿using SutoNavigation.NavigationService;
+﻿using SutoNavigation;
+using SutoNavigation.NavigationService;
 using SutoNavigation.Transitions;
 using System;
 using Windows.UI.Input;
@@ -17,7 +18,9 @@ namespace Suto_Navigation.Sample.Panes
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            this.Host.Navigate(typeof(LoginPanel), null, new InstagramTransition(TimeSpan.FromSeconds(1), TransitionDirection.LeftToRight));
+            this.Host.Navigate(typeof(LoginPanel), null, NavigationOption.Builder()
+                .AddTransition(new ParallaxSlideTransition(TimeSpan.FromSeconds(1), TransitionDirection.LeftToRight))
+                .Build());
         }
     }
 }
