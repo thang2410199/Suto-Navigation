@@ -43,7 +43,10 @@ Create `UserControl` base on `PanelBase`
 
 Navigate between Panel:
 
-`this.Host.Navigate(typeof(ProviderPanel), null, new InstagramTransition());`
+    this.Host.Navigate(typeof(ProviderPanel), null, 
+        NavigationOption.Builder()
+        .AddTransition(new FadeInTransition())
+        .Build());
 
 `this.Host.GoBack()`
 
