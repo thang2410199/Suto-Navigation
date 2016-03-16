@@ -17,6 +17,15 @@ namespace SutoNavigation.Transitions
         public TimeSpan Duration { get; set; }
         public EasingFunctionBase EasingFunction { get; set; }
 
+        public void ResetView(ref PanelBase currentPanel)
+        {
+            var transform = currentPanel.RenderTransform as CompositeTransform;
+            transform.ScaleX = transform.ScaleY = 1;
+            transform.TranslateX = transform.TranslateY = 0;
+            currentPanel.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            currentPanel.Opacity = 1;
+        }
+
         /// <summary>
         /// called everytime before the transition setup happend
         /// </summary>
@@ -24,7 +33,7 @@ namespace SutoNavigation.Transitions
         /// <param name="isGoBack"></param>
         public virtual void Setup(ref PanelBase currentPanel, bool isGoBack)
         {
-
+            
         }
 
         /// <summary>
@@ -38,23 +47,26 @@ namespace SutoNavigation.Transitions
             return new List<Timeline>();
         }
 
-        /// <summary>
-        /// Overwrite this only if you made change to other panel
-        /// Call base method before doing anything else
-        /// Called when the panel is reused for difference transition, clear thing up here
-        /// </summary>
-        /// <param name="currentPanel"></param>
-        public virtual void Cleanup(ref PanelBase currentPanel)
+        public void ResetPreviousView(ref PanelBase currentPanel)
         {
             var stack = currentPanel.Host.PanelStack;
             var currentIndex = stack.IndexOf(currentPanel);
             if (currentIndex >= 1)
             {
-                var lastTransform = stack[currentIndex - 1].RenderTransform as CompositeTransform;
-                lastTransform.ScaleX = lastTransform.ScaleY = 1;
-                lastTransform.TranslateX = lastTransform.TranslateY = 0;
-                stack[currentIndex - 1].Opacity = 1;
+                var previousPanel = stack[currentIndex - 1];
+                ResetView(ref previousPanel);
             }
+
+            Cleanup(ref currentPanel);
+        }
+        /// <summary>
+        /// Overwrite this only if you made change to other panel
+        /// Called when the panel is reused for difference transition, clear thing up here
+        /// </summary>
+        /// <param name="currentPanel"></param>
+        public virtual void Cleanup(ref PanelBase currentPanel)
+        {
+
         }
 
         /// <summary>

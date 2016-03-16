@@ -17,10 +17,12 @@ namespace SutoNavigation.Transitions
     public class ScaleTransition : PanelTransition
     {
         double initialScale = 0.65;
-        public ScaleTransition(TimeSpan duration, double initialScale)
+        double endScale = 1;
+        public ScaleTransition(TimeSpan duration, double initialScale, double endScale)
         {
             Duration = duration;
             this.initialScale = initialScale;
+            this.endScale = endScale;
         }
 
         public ScaleTransition(TimeSpan duration)
@@ -33,42 +35,34 @@ namespace SutoNavigation.Transitions
             Duration = TimeSpan.FromMilliseconds(400);
         }
 
-        public override void Setup(ref PanelBase userControl, bool isBack)
+        public override void Setup(ref PanelBase currentPanel, bool isGoBack)
         {
-            if (!isBack)
+            base.Setup(ref currentPanel, isGoBack);
+            if (!isGoBack)
             {
-                var render = userControl.RenderTransform as CompositeTransform;
-                userControl.RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5);
+                var render = currentPanel.RenderTransform as CompositeTransform;
+                currentPanel.RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5);
                 render.ScaleX = render.ScaleY = initialScale;
-                userControl.Opacity = 0;
             }
         }
 
-        public override List<Timeline> CreateAnimation(ref PanelBase userControl, bool isBack)
+        public override List<Timeline> CreateAnimation(ref PanelBase userControl, bool isGoBack)
         {
             DoubleAnimation animationX = new DoubleAnimation();
             animationX.Duration = Duration;
             animationX.EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut };
-            animationX.To = !isBack ? 1 : initialScale;
+            animationX.To = !isGoBack ? endScale : initialScale;
             Storyboard.SetTarget(animationX, userControl.RenderTransform);
             Storyboard.SetTargetProperty(animationX, nameof(CompositeTransform.ScaleX));
 
             DoubleAnimation animationY = new DoubleAnimation();
             animationY.Duration = Duration;
             animationY.EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut };
-            animationY.To = !isBack ? 1 : initialScale;
+            animationY.To = !isGoBack ? endScale : initialScale;
             Storyboard.SetTarget(animationY, userControl.RenderTransform);
             Storyboard.SetTargetProperty(animationY, nameof(CompositeTransform.ScaleY));
 
-            DoubleAnimation animationOpacity = new DoubleAnimation();
-            animationOpacity.Duration = Duration;
-            animationOpacity.EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut };
-            animationOpacity.From = userControl.Opacity;
-            animationOpacity.To = isBack ? 0 : 1;
-            Storyboard.SetTarget(animationOpacity, userControl);
-            Storyboard.SetTargetProperty(animationOpacity, nameof(userControl.Opacity));
-
-            return new List<Timeline>() { animationX, animationY, animationOpacity };
+            return new List<Timeline>() { animationX, animationY };
         }
     }
 }

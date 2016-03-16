@@ -314,7 +314,7 @@ namespace SutoNavigation.NavigationService
                     if (oldPanel != null)
                     {
                         //Reset the animation applied to realated panel
-                        oldPanel.Transition.Cleanup(ref oldPanel);
+                        oldPanel.Transition.ResetPreviousView(ref oldPanel);
 
                         var oldPanelIndex = PanelStack.IndexOf(oldPanel);
                         // If its not the first Panel, re apply next panel transition initial state to the previous panel
@@ -365,6 +365,11 @@ namespace SutoNavigation.NavigationService
                 SetupTransition(ref panel);
 
             this.root.Children.Add(panel);
+            if(PanelStack.Count >= 3)
+            {
+                PanelStack[PanelStack.Count - 3].Visibility = Visibility.Collapsed;
+            }
+
             if (panel.Transition.GetType() != typeof(BasicTransition))
             {
                 transitionStoryboard.Begin();
@@ -372,14 +377,15 @@ namespace SutoNavigation.NavigationService
             }
             else
             {
-                FireOnNavigateComplete();
+                PanelAnimation_Completed(null, null);
             }
         }
 
         private void SetupTransition(ref PanelBase panel, bool isBack = false)
         {
             transitionStoryboard = new Storyboard();
-
+            //We need to reset because the panel can be reused, not just created.
+            panel.Transition.ResetView(ref panel);
             panel.Transition.Setup(ref panel, isBack);
             var animations = panel.Transition.CreateAnimation(ref panel, isBack);
             foreach (var item in animations)
@@ -419,8 +425,7 @@ namespace SutoNavigation.NavigationService
             UpdateBackButton();
             FireOnNavigateTo(PanelStack.Last());
             state = NavigationState.Idle;
-            if (PanelStack.Count > 2)
-                PanelStack[PanelStack.Count - 3].Visibility = Visibility.Collapsed;
+
             FireOnNavigateComplete();
         }
 

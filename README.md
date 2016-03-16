@@ -43,7 +43,7 @@ Create `UserControl` base on `PanelBase`
 
 Navigate between Panel:
 
-    this.Host.Navigate(typeof(ProviderPanel), null, 
+    this.Host.Navigate(typeof(ProviderPanel), 
         NavigationOption.Builder()
         .AddTransition(new FadeInTransition())
         .Build());

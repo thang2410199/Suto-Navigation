@@ -38,9 +38,10 @@ namespace SutoNavigation.Transitions
         /// </summary>
         public double FeedbackOffset { get; set; } = 100;
 
-        public override void Setup(ref PanelBase userControl, bool isBack)
+        public override void Setup(ref PanelBase userControl, bool isGoBack)
         {
-            if (!isBack)
+            base.Setup(ref userControl, isGoBack);
+            if (!isGoBack)
             {
                 currentPanel = userControl;
                 var transform = currentPanel.RenderTransform as CompositeTransform;

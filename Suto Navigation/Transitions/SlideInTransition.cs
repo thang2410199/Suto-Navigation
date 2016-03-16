@@ -33,12 +33,13 @@ namespace SutoNavigation.Transitions
             Duration = TimeSpan.FromMilliseconds(400);
         }
 
-        public override void Setup(ref PanelBase userControl, bool isBack)
+        public override void Setup(ref PanelBase currentPanel, bool isGoBack)
         {
-            if(!isBack)
+            base.Setup(ref currentPanel, isGoBack);
+            if (!isGoBack)
             {
-                var render = userControl.RenderTransform as CompositeTransform;
-                var newPosition = SlideTransitionHelper.GetSlideTargetValue(Direction, userControl.Host);
+                var render = currentPanel.RenderTransform as CompositeTransform;
+                var newPosition = SlideTransitionHelper.GetSlideTargetValue(Direction, currentPanel.Host);
                 switch(Direction)
                 {
                     case TransitionDirection.RightToLeft:

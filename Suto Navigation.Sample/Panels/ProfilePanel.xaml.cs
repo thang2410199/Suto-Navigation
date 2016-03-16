@@ -53,6 +53,11 @@ namespace Suto_Navigation.Sample.Panes
                         .AddTransition(new ParallaxSlideTransition())
                         .Build();
                     break;
+                case 5:
+                    option = NavigationOption.Builder()
+                        .AddTransition(new ScaleSlideTransition())
+                        .Build();
+                    break;
             }
         }
     }

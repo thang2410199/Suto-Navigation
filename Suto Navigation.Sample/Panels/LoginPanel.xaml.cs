@@ -31,7 +31,7 @@ namespace Suto_Navigation.Sample.Panes
         {
             this.Host.Navigate(typeof(ProviderPanel),  
                 NavigationOption.Builder()
-                .AddTransition(new ParallaxSlideTransition(TimeSpan.FromSeconds(1)))
+                .AddTransition(new ScaleSlideTransition())
                 .Build());
         }
     }

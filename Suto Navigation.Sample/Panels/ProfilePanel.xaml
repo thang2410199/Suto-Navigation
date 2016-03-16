@@ -29,6 +29,7 @@
             <ComboBoxItem Content="Use Slide push transition"/>
             <ComboBoxItem Content="Use Faid in transition"/>
             <ComboBoxItem Content="Use Parallax transition"/>
+            <ComboBoxItem Content="Use Scale slide transition"/>
         </ComboBox>
 
     </Grid>
