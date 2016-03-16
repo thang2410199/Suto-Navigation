@@ -66,8 +66,6 @@ namespace SutoNavigation.Transitions
             {
                 UnregisterManipulation(ref userControl);
             }
-
-            
         }
 
         public override List<Timeline> CreateAnimation(ref PanelBase userControl, bool isBack)
@@ -124,6 +122,27 @@ namespace SutoNavigation.Transitions
             var lastTransform = lastPanel.RenderTransform as CompositeTransform;
             lastTransform.TranslateX = lastTransform.TranslateY = 0;
             UnregisterManipulation(ref userControl);
+        }
+
+        public override void SetLastPanelInitialState(ref PanelBase lastUserControl)
+        {
+            var transform = lastUserControl.RenderTransform as CompositeTransform;
+            switch (Direction)
+            {
+                case TransitionDirection.LeftToRight:
+                    transform.TranslateX = FeedbackOffset;
+                    break;
+                case TransitionDirection.RightToLeft:
+                    transform.TranslateX = -FeedbackOffset;
+                    break;
+                case TransitionDirection.TopToBottom:
+                    transform.TranslateY = -FeedbackOffset;
+                    break;
+                case TransitionDirection.BottomToTop:
+                    transform.TranslateY = FeedbackOffset;
+                    break;
+
+            }
         }
 
         private void RegisterManipulation(ref PanelBase userControl)

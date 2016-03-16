@@ -144,6 +144,13 @@ namespace SutoNavigation.NavigationService
                     root.Children.Remove(panel);
                 }
             }
+
+            //Re apply effect for the remained panel, from top to bottm
+            for (int i = PanelStack.Count - 1; i > 0; i--)
+            {
+                var lastPanel = PanelStack[i - 1];
+                PanelStack[i].Transition.SetLastPanelInitialState(ref lastPanel);
+            }
         }
 
         public void DisableAutoMemoryManagement()
@@ -273,6 +280,14 @@ namespace SutoNavigation.NavigationService
                     {
                         //Reset the animation applied to realated panel
                         oldPanel.Transition.ResetOnReUse(ref oldPanel);
+
+                        var oldPanelIndex = PanelStack.IndexOf(oldPanel);
+                        // If its not the first Panel, re apply next panel transition initial state to the previous panel
+                        if(oldPanelIndex > 0 && oldPanelIndex + 1 < PanelStack.Count)
+                        {
+                            var lastPanel = PanelStack[oldPanelIndex - 1];
+                            PanelStack[oldPanelIndex + 1].Transition.SetLastPanelInitialState(ref lastPanel);
+                        }
 
                         //Move oldPanel to the last in Stack.
                         PanelStack.Remove(oldPanel);

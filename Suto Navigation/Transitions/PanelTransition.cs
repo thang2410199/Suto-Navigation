@@ -70,6 +70,11 @@ namespace SutoNavigation.Transitions
         {
             
         }
+
+        public virtual void SetLastPanelInitialState(ref PanelBase lastUserControl)
+        {
+
+        }
     }
 
     public enum TransitionDirection
