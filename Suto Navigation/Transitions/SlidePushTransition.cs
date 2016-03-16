@@ -12,22 +12,22 @@ using Windows.UI.Xaml.Media.Animation;
 namespace SutoNavigation.Transitions
 {
     /// <summary>
-    /// Animate next panel to overlay the current panel in a direction
+    /// Animate next panel to push the current panel in a direction
     /// </summary>
-    public class SlideInTransition : PanelTransition
+    public class SlidePushTransition : PanelTransition
     {
-        public SlideInTransition(TimeSpan duration, TransitionDirection direction)
+        public SlidePushTransition(TimeSpan duration, TransitionDirection direction)
         {
             Duration = duration;
             Direction = direction;
         }
 
-        public SlideInTransition(TimeSpan duration)
+        public SlidePushTransition(TimeSpan duration)
         {
             Duration = duration;
         }
 
-        public SlideInTransition()
+        public SlidePushTransition()
         {
             Duration = TimeSpan.FromMilliseconds(400);
         }
@@ -51,9 +51,10 @@ namespace SutoNavigation.Transitions
                 }
             }
         }
-
+        PanelBase lastPanel;
         public override List<Timeline> CreateAnimation(ref PanelBase userControl, bool isBack)
         {
+            var animations = new List<Timeline>();
             var newPosition = base.GetSlideTransitionProperty(Direction, userControl.Host);
             DoubleAnimation animation = new DoubleAnimation();
             animation.Duration = Duration;
@@ -62,8 +63,38 @@ namespace SutoNavigation.Transitions
             Storyboard.SetTarget(animation, userControl.RenderTransform);
             Storyboard.SetTargetProperty(animation, base.GetTransitionProperty(Direction));
 
+            animations.Add(animation);
 
-            return new List<Timeline>() { animation };
+            var stack = userControl.Host.PanelStack;
+            if (stack.Count > 0)
+            {
+                lastPanel = stack[stack.Count - 2];
+                DoubleAnimation subAnimation = new DoubleAnimation();
+                subAnimation.Duration = Duration;
+                subAnimation.EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut };
+                subAnimation.To = isBack ? 0 : -newPosition;
+                Storyboard.SetTarget(subAnimation, lastPanel.RenderTransform);
+                Storyboard.SetTargetProperty(subAnimation, base.GetTransitionProperty(Direction));
+
+                animations.Add(subAnimation);
+            }
+
+
+
+
+            return animations;
+        }
+
+        public override void ResetOnReUse(ref PanelBase userControl)
+        {
+            var lastTransform = lastPanel.RenderTransform as CompositeTransform;
+            lastTransform.TranslateX = lastTransform.TranslateY = 0;
+        }
+
+        public override void SetLastPanelInitialState(ref PanelBase lastUserControl)
+        {
+            var transform = lastUserControl.RenderTransform as CompositeTransform;
+            var newPosition = base.GetSlideTransitionProperty(Direction, lastUserControl.Host);
         }
     }
 }

@@ -120,6 +120,8 @@
     <Compile Include="Transitions\BasicTransition.cs" />
     <Compile Include="Transitions\InstagramTransition.cs" />
     <Compile Include="Transitions\ParallaxSlideTransition.cs" />
+    <Compile Include="Transitions\ScaleTransition.cs" />
+    <Compile Include="Transitions\SlidePushTransition.cs" />
     <Compile Include="Transitions\SlideInTransition.cs" />
     <Compile Include="Transitions\PanelTransition.cs" />
     <Compile Include="PanelBase.cs" />

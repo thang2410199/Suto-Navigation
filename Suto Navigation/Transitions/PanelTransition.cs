@@ -13,7 +13,7 @@ namespace SutoNavigation.Transitions
 {
     public abstract class PanelTransition
     {
-        public TransitionDirection Direction { get; set; }
+        public TransitionDirection Direction { get; set; } = TransitionDirection.RightToLeft;
         public TimeSpan Duration { get; set; }
         public EasingFunctionBase EasingFunction { get; set; }
 

@@ -20,8 +20,16 @@
         
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" >
 
-            <Button Content="Use Instagram Transition" Click="Button_Click"/>
+            <Button Content="Navigate" Click="Button_Click"/>
         </StackPanel>
+
+        <ComboBox SelectedIndex="0" VerticalAlignment="Center" Margin="0,0,0,100" SelectionChanged="ComboBox_SelectionChanged">
+            <ComboBoxItem Content="Use Scale transition"/>
+            <ComboBoxItem Content="Use Slide in transition"/>
+            <ComboBoxItem Content="Use Slide push transition"/>
+            <ComboBoxItem Content="Use Faid in transition"/>
+            <ComboBoxItem Content="Use Parallax transition"/>
+        </ComboBox>
 
     </Grid>
 </suto:PanelBase>

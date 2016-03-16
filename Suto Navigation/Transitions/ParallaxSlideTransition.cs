@@ -12,6 +12,9 @@ using Windows.UI.Xaml.Media.Animation;
 
 namespace SutoNavigation.Transitions
 {
+    /// <summary>
+    /// Animate next panel to parallax push the current panel in a direction
+    /// </summary>
     public class ParallaxSlideTransition : PanelTransition
     {
         private PanelBase currentPanel;
@@ -19,7 +22,6 @@ namespace SutoNavigation.Transitions
 
         public ParallaxSlideTransition()
         {
-            Direction = TransitionDirection.RightToLeft;
             Duration = TimeSpan.FromMilliseconds(400);
         }
 
