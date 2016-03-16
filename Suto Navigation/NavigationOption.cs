@@ -14,15 +14,18 @@ namespace SutoNavigation
 
         public OperationMode OperationMode { get; set; }
 
+        public Dictionary<string, object> Arguments { get; set; }
+
         public NavigationOption()
         {
             
         }
 
-        public NavigationOption(PanelTransition transition, OperationMode operationMode)
+        public NavigationOption(PanelTransition transition, OperationMode operationMode, Dictionary<string, object> arguments)
         {
             this.Transition = transition;
             this.OperationMode = operationMode;
+            this.Arguments = arguments;
         }
 
         public static NavigationOptionBuilder Builder()
@@ -36,6 +39,8 @@ namespace SutoNavigation
 
             OperationMode operationMode = OperationMode.Auto;
 
+            Dictionary<string, object> arguments = null;
+
             public NavigationOptionBuilder AddTransition(PanelTransition transition)
             {
                 this.transition = transition;
@@ -48,12 +53,18 @@ namespace SutoNavigation
                 return this;
             }
 
+            public NavigationOptionBuilder AddOperationMode(Dictionary<string, object> arg)
+            {
+                this.arguments = arg;
+                return this;
+            }
+
             /// <summary>
             /// Return default option: BasicTranstion OperationMode.Auto
             /// </summary>
             public NavigationOption Build()
             {
-                return new NavigationOption(this.transition, this.operationMode);
+                return new NavigationOption(this.transition, this.operationMode, this.arguments);
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using SutoNavigation.NavigationService;
+﻿using SutoNavigation.Helpers;
+using SutoNavigation.NavigationService;
 using SutoNavigation.NavigationService.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -32,12 +33,12 @@ namespace SutoNavigation.Transitions
             Duration = TimeSpan.FromMilliseconds(400);
         }
 
-        public override void SetInitialState(ref PanelBase userControl, bool isBack)
+        public override void Setup(ref PanelBase userControl, bool isBack)
         {
             if(!isBack)
             {
                 var render = userControl.RenderTransform as CompositeTransform;
-                var newPosition = base.GetSlideTransitionProperty(Direction, userControl.Host);
+                var newPosition = SlideTransitionHelper.GetSlideTargetValue(Direction, userControl.Host);
                 switch(Direction)
                 {
                     case TransitionDirection.RightToLeft:
@@ -54,13 +55,13 @@ namespace SutoNavigation.Transitions
 
         public override List<Timeline> CreateAnimation(ref PanelBase userControl, bool isBack)
         {
-            var newPosition = base.GetSlideTransitionProperty(Direction, userControl.Host);
+            var newPosition = SlideTransitionHelper.GetSlideTargetValue(Direction, userControl.Host);
             DoubleAnimation animation = new DoubleAnimation();
             animation.Duration = Duration;
             animation.EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut };
             animation.To = !isBack ? 0 : newPosition;
             Storyboard.SetTarget(animation, userControl.RenderTransform);
-            Storyboard.SetTargetProperty(animation, base.GetTransitionProperty(Direction));
+            Storyboard.SetTargetProperty(animation, SlideTransitionHelper.GetSlideTargetPropertyName(Direction));
 
 
             return new List<Timeline>() { animation };

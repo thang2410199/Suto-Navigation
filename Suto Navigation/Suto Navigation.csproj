@@ -110,6 +110,7 @@
   <ItemGroup>
     <Compile Include="EventArgs\MemoryReportEventArgs.cs" />
     <Compile Include="EventArgs\OnScreenModeChangedArgs.cs" />
+    <Compile Include="Helpers\SlideTransitionHelper.cs" />
     <Compile Include="Helpers\SmartWeakEvent.cs" />
     <Compile Include="Interfaces\IMemoryReactor.cs" />
     <Compile Include="Interfaces\IMemoryWatcher.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="Transitions\BasicTransition.cs" />
     <Compile Include="Transitions\InstagramTransition.cs" />
     <Compile Include="Transitions\ParallaxSlideTransition.cs" />
+    <Compile Include="Transitions\ScaleSlideTransition.cs" />
     <Compile Include="Transitions\ScaleTransition.cs" />
     <Compile Include="Transitions\SlidePushTransition.cs" />
     <Compile Include="Transitions\SlideInTransition.cs" />

@@ -14,6 +14,12 @@ namespace SutoNavigation.Transitions
     /// </summary>
     public class FadeInTransition : PanelTransition
     {
+        double initialScale = 0;
+        public FadeInTransition(TimeSpan duration, double initialScale)
+        {
+            this.Duration = duration;
+            this.initialScale = initialScale;
+        }
         public FadeInTransition(TimeSpan duration)
         {
             Duration = duration;
@@ -24,10 +30,10 @@ namespace SutoNavigation.Transitions
             Duration = TimeSpan.FromMilliseconds(400);
         }
 
-        public override void SetInitialState(ref PanelBase userControl, bool isBack)
+        public override void Setup(ref PanelBase userControl, bool isBack)
         {
             if(!isBack)
-                userControl.Opacity = 0;
+                userControl.Opacity = initialScale;
         }
 
         public override List<Timeline> CreateAnimation(ref PanelBase userControl, bool isBack)
@@ -36,7 +42,7 @@ namespace SutoNavigation.Transitions
             animation.Duration = Duration;
             animation.EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut };
             animation.From = userControl.Opacity;
-            animation.To = isBack ? 0 : 1;
+            animation.To = isBack ? initialScale : 1;
             Storyboard.SetTarget(animation, userControl);
             Storyboard.SetTargetProperty(animation, nameof(userControl.Opacity));
 

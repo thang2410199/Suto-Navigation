@@ -16,14 +16,14 @@ namespace SutoNavigation.NavigationService.Interfaces
         /// </summary>
         /// <param name="host">A reference to the host.</param>
         /// <param name="arguments">Arguments for the panel</param>
-        void PanelSetup(IPanelHost host, Dictionary<string, object> arguments);
+        void PanelSetup(IPanelHost host, NavigationOption options);
 
         /// <summary>
         /// Fired when the panel is already in the stack, but a new navigate has been made to it.
         /// Instead of creating a new panel, this same panel is used and given the navigation arguments.
         /// </summary>
         /// <param name="arguments">The argumetns passed when navigate was called</param>
-        void OnPanelPulledToTop(Dictionary<string, object> arguments);
+        void OnPanelPulledToTop(NavigationOption options);
 
         /// <summary>
         /// Fired before the panel is shown but when it is just about to be shown.

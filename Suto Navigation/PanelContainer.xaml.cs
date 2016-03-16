@@ -175,7 +175,7 @@ namespace SutoNavigation.NavigationService
                 {
                     if(lastPanel != null && needResetVisual == true)
                     {
-                        PanelStack[i].Transition.SetLastPanelInitialState(ref lastPanel);
+                        PanelStack[i].Transition.SetupPreviousPanel(ref lastPanel);
                         needResetVisual = false;
                     }
 
@@ -268,6 +268,9 @@ namespace SutoNavigation.NavigationService
                 //// Remove the panel, use the index or we will remove the wrong one!
                 //PanelStack.RemoveAt(PanelStack.Count - 1);
 
+                if (PanelStack.Count > 1)
+                    PanelStack[PanelStack.Count - 2].Visibility = Visibility.Visible;
+
                 if (leavingPanel.Transition.GetType() != typeof(BasicTransition))
                 {
                     // TODO: Save animation state when navigating to to use here, or allow custom transition from outside
@@ -287,7 +290,7 @@ namespace SutoNavigation.NavigationService
             return true;
         }
 
-        public bool Navigate(Type panelType, Dictionary<string, object> arguments = null, NavigationOption options = null)
+        public bool Navigate(Type panelType, NavigationOption options = null)
         {
             if (options == null)
                 options = NavigationOption.Builder().Build();
@@ -311,14 +314,14 @@ namespace SutoNavigation.NavigationService
                     if (oldPanel != null)
                     {
                         //Reset the animation applied to realated panel
-                        oldPanel.Transition.ResetOnReUse(ref oldPanel);
+                        oldPanel.Transition.Cleanup(ref oldPanel);
 
                         var oldPanelIndex = PanelStack.IndexOf(oldPanel);
                         // If its not the first Panel, re apply next panel transition initial state to the previous panel
                         if(oldPanelIndex > 0 && oldPanelIndex + 1 < PanelStack.Count)
                         {
-                            var lastPanel = PanelStack[oldPanelIndex - 1];
-                            PanelStack[oldPanelIndex + 1].Transition.SetLastPanelInitialState(ref lastPanel);
+                            var previousPanel = PanelStack[oldPanelIndex - 1];
+                            PanelStack[oldPanelIndex + 1].Transition.SetupPreviousPanel(ref previousPanel);
                         }
 
                         //Move oldPanel to the last in Stack.
@@ -343,7 +346,7 @@ namespace SutoNavigation.NavigationService
             if (options.Transition != null)
                 panel.Transition = options.Transition;
             PanelStack.Add(panel);
-            panel.PanelSetup(this, arguments);
+            panel.PanelSetup(this, options);
             SetUpPanelAsControl(ref panel);
             return true;
         }
@@ -377,7 +380,7 @@ namespace SutoNavigation.NavigationService
         {
             transitionStoryboard = new Storyboard();
 
-            panel.Transition.SetInitialState(ref panel, isBack);
+            panel.Transition.Setup(ref panel, isBack);
             var animations = panel.Transition.CreateAnimation(ref panel, isBack);
             foreach (var item in animations)
             {
@@ -416,6 +419,8 @@ namespace SutoNavigation.NavigationService
             UpdateBackButton();
             FireOnNavigateTo(PanelStack.Last());
             state = NavigationState.Idle;
+            if (PanelStack.Count > 2)
+                PanelStack[PanelStack.Count - 3].Visibility = Visibility.Collapsed;
             FireOnNavigateComplete();
         }
 
@@ -426,7 +431,6 @@ namespace SutoNavigation.NavigationService
             FireOnCleanupPanel(leavingPanel);
             PanelStack.RemoveAt(PanelStack.Count - 1);
             root.Children.Remove(leavingPanel);
-
             UpdateBackButton();
             state = NavigationState.Idle;
         }

@@ -30,6 +30,7 @@ namespace SutoNavigation.NavigationService
 
         public virtual void OnCleanupPanel()
         {
+            
         }
 
         public virtual void OnNavigatingFrom()
@@ -40,7 +41,7 @@ namespace SutoNavigation.NavigationService
         {
         }
 
-        public virtual void OnPanelPulledToTop(Dictionary<string, object> arguments)
+        public virtual void OnPanelPulledToTop(NavigationOption options)
         {
         }
 
@@ -48,7 +49,7 @@ namespace SutoNavigation.NavigationService
         {
         }
 
-        public virtual void PanelSetup(IPanelHost host, Dictionary<string, object> arguments)
+        public virtual void PanelSetup(IPanelHost host, NavigationOption options)
         {
             this.Host = host;
         }

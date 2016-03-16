@@ -33,7 +33,7 @@ namespace SutoNavigation.Transitions
             Duration = TimeSpan.FromMilliseconds(400);
         }
 
-        public override void SetInitialState(ref PanelBase userControl, bool isBack)
+        public override void Setup(ref PanelBase userControl, bool isBack)
         {
             if (!isBack)
             {

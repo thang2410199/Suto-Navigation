@@ -21,7 +21,7 @@ namespace Suto_Navigation.Sample.Panes
                 .Build();
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            this.Host.Navigate(typeof(LoginPanel), null, option);
+            this.Host.Navigate(typeof(LoginPanel), option);
         }
 
         private void ComboBox_SelectionChanged(object sender, Windows.UI.Xaml.Controls.SelectionChangedEventArgs e)

@@ -1,4 +1,5 @@
-﻿using SutoNavigation.NavigationService;
+﻿using SutoNavigation.Helpers;
+using SutoNavigation.NavigationService;
 using SutoNavigation.NavigationService.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace SutoNavigation.Transitions
     {
         private PanelBase currentPanel;
         private PanelBase lastPanel;
+        private bool initialized = false;
 
         public ParallaxSlideTransition()
         {
@@ -36,7 +38,7 @@ namespace SutoNavigation.Transitions
         /// </summary>
         public double FeedbackOffset { get; set; } = 100;
 
-        public override void SetInitialState(ref PanelBase userControl, bool isBack)
+        public override void Setup(ref PanelBase userControl, bool isBack)
         {
             if (!isBack)
             {
@@ -81,7 +83,7 @@ namespace SutoNavigation.Transitions
 
                 DoubleAnimation lastAnimation = new DoubleAnimation();
                 //lastAnimation.From = isBack ? -500 :0;
-                if(isBack)
+                if (isBack)
                 {
                     lastAnimation.To = 0;
                 }
@@ -103,30 +105,30 @@ namespace SutoNavigation.Transitions
                 lastAnimation.Duration = userControl.Transition.Duration;
                 lastAnimation.EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut };
                 Storyboard.SetTarget(lastAnimation, lastTransform);
-                Storyboard.SetTargetProperty(lastAnimation, base.GetTransitionProperty(Direction));
+                Storyboard.SetTargetProperty(lastAnimation, SlideTransitionHelper.GetSlideTargetPropertyName(Direction));
                 animations.Add(lastAnimation);
             }
 
-            var newPosition = base.GetSlideTransitionProperty(Direction, userControl.Host);
+            var newPosition = SlideTransitionHelper.GetSlideTargetValue(Direction, userControl.Host);
             DoubleAnimation animation = new DoubleAnimation();
             animation.Duration = Duration;
             animation.EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut };
             animation.To = !isBack ? 0 : newPosition;
             Storyboard.SetTarget(animation, userControl.RenderTransform);
-            Storyboard.SetTargetProperty(animation, base.GetTransitionProperty(Direction));
+            Storyboard.SetTargetProperty(animation, SlideTransitionHelper.GetSlideTargetPropertyName(Direction));
             animations.Add(animation);
 
             return animations;
         }
 
-        public override void ResetOnReUse(ref PanelBase userControl)
+        public override void Cleanup(ref PanelBase userControl)
         {
             var lastTransform = lastPanel.RenderTransform as CompositeTransform;
             lastTransform.TranslateX = lastTransform.TranslateY = 0;
             UnregisterManipulation(ref userControl);
         }
 
-        public override void SetLastPanelInitialState(ref PanelBase lastUserControl)
+        public override void SetupPreviousPanel(ref PanelBase lastUserControl)
         {
             var transform = lastUserControl.RenderTransform as CompositeTransform;
             switch (Direction)
@@ -149,14 +151,22 @@ namespace SutoNavigation.Transitions
 
         private void RegisterManipulation(ref PanelBase userControl)
         {
-            userControl.ManipulationDelta += UserControl_ManipulationDelta;
-            userControl.ManipulationCompleted += UserControl_ManipulationCompleted;
+            if (!initialized)
+            {
+                userControl.ManipulationDelta += UserControl_ManipulationDelta;
+                userControl.ManipulationCompleted += UserControl_ManipulationCompleted;
+                initialized = true;
+            }
         }
 
         private void UnregisterManipulation(ref PanelBase userControl)
         {
-            userControl.ManipulationDelta -= UserControl_ManipulationDelta;
-            userControl.ManipulationCompleted -= UserControl_ManipulationCompleted;
+            if (initialized)
+            {
+                userControl.ManipulationDelta -= UserControl_ManipulationDelta;
+                userControl.ManipulationCompleted -= UserControl_ManipulationCompleted;
+                initialized = false;
+            }
         }
 
         private void UserControl_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
@@ -199,7 +209,7 @@ namespace SutoNavigation.Transitions
 
                 Storyboard storyboard = new Storyboard();
                 Storyboard.SetTarget(animation, transform);
-                Storyboard.SetTargetProperty(animation, base.GetTransitionProperty(this.Direction));
+                Storyboard.SetTargetProperty(animation, SlideTransitionHelper.GetSlideTargetPropertyName(this.Direction));
                 storyboard.Children.Add(animation);
                 storyboard.Begin();
 
@@ -254,7 +264,7 @@ namespace SutoNavigation.Transitions
                 feedbackOffset = -feedbackOffset;
             }
 
-            if(moved)
+            if (moved)
             {
                 var stack = currentPanel.Host.PanelStack;
                 lastPanel = stack[stack.Count - 2];

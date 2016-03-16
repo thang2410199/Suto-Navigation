@@ -29,7 +29,7 @@ namespace Suto_Navigation.Sample.Panes
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            this.Host.Navigate(typeof(ProviderPanel), null, 
+            this.Host.Navigate(typeof(ProviderPanel),  
                 NavigationOption.Builder()
                 .AddTransition(new ParallaxSlideTransition(TimeSpan.FromSeconds(1)))
                 .Build());
