@@ -45,15 +45,19 @@ namespace SutoNavigation.Transitions
                 {
                     case TransitionDirection.LeftToRight:
                         transform.TranslateX = -currentPanel.Host.Size.Width;
+                        userControl.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.System;
                         break;
                     case TransitionDirection.RightToLeft:
                         transform.TranslateX = currentPanel.Host.Size.Width;
+                        userControl.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.System;
                         break;
                     case TransitionDirection.TopToBottom:
                         transform.TranslateX = -currentPanel.Host.Size.Height;
+                        userControl.ManipulationMode = ManipulationModes.TranslateY | ManipulationModes.System;
                         break;
                     case TransitionDirection.BottomToTop:
                         transform.TranslateX = currentPanel.Host.Size.Height;
+                        userControl.ManipulationMode = ManipulationModes.TranslateY | ManipulationModes.System;
                         break;
 
                 }
