@@ -262,11 +262,11 @@ namespace SutoNavigation.Transitions
                 {
                     case TransitionDirection.LeftToRight:
                     case TransitionDirection.RightToLeft:
-                        lastTransform.TranslateX = (1 - newPosition / currentPanel.Host.Size.Width) * -feedbackOffset;
+                        lastTransform.TranslateX = (1 - Math.Abs(newPosition / currentPanel.Host.Size.Width)) * -feedbackOffset;
                         break;
                     case TransitionDirection.TopToBottom:
                     case TransitionDirection.BottomToTop:
-                        lastTransform.TranslateY = (1 - newPosition / currentPanel.Host.Size.Height) * -feedbackOffset;
+                        lastTransform.TranslateY = (1 - Math.Abs(newPosition / currentPanel.Host.Size.Height)) * -feedbackOffset;
                         break;
 
                 }

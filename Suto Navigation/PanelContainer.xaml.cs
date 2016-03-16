@@ -127,29 +127,61 @@ namespace SutoNavigation.NavigationService
             }
 
             //Never clear current pannel
-            panelToClear = PanelStack.Take(PanelStack.Count - 1).Where(p => p.Importaness == target).ToList();
-            var size = panelToClear.Count;
-            if (size > 0)
+            //panelToClear = PanelStack.Take(PanelStack.Count - 1).Where(p => p.Importaness == target).ToList();
+            //var size = panelToClear.Count;
+            //if (size > 0)
+            //{
+            //    for (int i = 0; i < size; i++)
+            //    {
+            //        var panel = panelToClear[i];
+            //        FireOnReduceMemory(panel);
+            //        panel.Transition.ResetOnReUse(ref panel);
+
+            //        //Remove from stack
+            //        PanelStack.Remove(panel);
+
+            //        //Remove from visual
+            //        root.Children.Remove(panel);
+            //    }
+            //}
+
+            ////Re apply effect for the remained panel, from top to bottm
+            ////TODO: Find a more optimized way
+            //for (int i = PanelStack.Count - 1; i > 0; i--)
+            //{
+            //    var lastPanel = PanelStack[i - 1];
+            //    PanelStack[i].Transition.SetLastPanelInitialState(ref lastPanel);
+            //}
+
+            PanelBase lastPanel = null;
+            int i = MinimumThresshold;
+            bool needResetVisual = false;
+            while(i < PanelStack.Count - 1)
             {
-                for (int i = 0; i < size; i++)
+                if(PanelStack[i].Importaness == target)
                 {
                     var panel = panelToClear[i];
                     FireOnReduceMemory(panel);
-                    panel.Transition.ResetOnReUse(ref panel);
 
                     //Remove from stack
                     PanelStack.Remove(panel);
 
                     //Remove from visual
                     root.Children.Remove(panel);
-                }
-            }
 
-            //Re apply effect for the remained panel, from top to bottm
-            for (int i = PanelStack.Count - 1; i > 0; i--)
-            {
-                var lastPanel = PanelStack[i - 1];
-                PanelStack[i].Transition.SetLastPanelInitialState(ref lastPanel);
+                    needResetVisual = true;
+                }
+                else
+                {
+                    if(lastPanel != null && needResetVisual == true)
+                    {
+                        PanelStack[i].Transition.SetLastPanelInitialState(ref lastPanel);
+                        needResetVisual = false;
+                    }
+
+                    lastPanel = PanelStack[i];
+                }
+                i++;
             }
         }
 
