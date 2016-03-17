@@ -1,9 +1,5 @@
-﻿using SutoNavigation.Transitions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SutoNavigation.Interfaces;
+using SutoNavigation.Transitions;
 
 namespace SutoNavigation.NavigationService.Interfaces
 {

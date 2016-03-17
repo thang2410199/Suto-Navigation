@@ -153,7 +153,7 @@ namespace SutoNavigation.NavigationService
             //    PanelStack[i].Transition.SetLastPanelInitialState(ref lastPanel);
             //}
 
-            PanelBase lastPanel = null;
+            PanelBase previousPanel = null;
             int i = MinimumThresshold;
             bool needResetVisual = false;
             while(i < PanelStack.Count - 1)
@@ -173,13 +173,14 @@ namespace SutoNavigation.NavigationService
                 }
                 else
                 {
-                    if(lastPanel != null && needResetVisual == true)
+                    if(previousPanel != null && needResetVisual == true)
                     {
-                        PanelStack[i].Transition.SetupPreviousPanel(ref lastPanel);
+                        //once the low importance panel is removed, we need to set the previous panel state to comfort this panel transition
+                        PanelStack[i].Transition.SetupPreviousPanel(ref previousPanel);
                         needResetVisual = false;
                     }
 
-                    lastPanel = PanelStack[i];
+                    previousPanel = PanelStack[i];
                 }
                 i++;
             }
@@ -346,13 +347,16 @@ namespace SutoNavigation.NavigationService
             if (options.Transition != null)
                 panel.Transition = options.Transition;
             PanelStack.Add(panel);
+            // Give data to panel to start getting / processing ahead of animation to create illusion of speed :)
             panel.PanelSetup(this, options);
+            // Use transition to add the panel to visual tree
             SetUpPanelAsControl(ref panel);
             return true;
         }
 
         private void SetUpPanelAsControl(ref PanelBase panel)
         {
+            // Assign a render transform to panel if not have yet
             var transform = panel.RenderTransform as CompositeTransform;
             if (transform == null)
             {
@@ -361,10 +365,13 @@ namespace SutoNavigation.NavigationService
             }
 
             //transitionStoryboard?.Stop();
+            // Setup animation for transition only if custom transition implemented
             if (panel.Transition.GetType() != typeof(BasicTransition))
                 SetupTransition(ref panel);
 
             this.root.Children.Add(panel);
+
+            // Hide unuse panel to save render power and avoid getting in the way of more complex transition 
             if(PanelStack.Count >= 3)
             {
                 PanelStack[PanelStack.Count - 3].Visibility = Visibility.Collapsed;

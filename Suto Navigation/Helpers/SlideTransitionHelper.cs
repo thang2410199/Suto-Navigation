@@ -1,10 +1,5 @@
-﻿using SutoNavigation.NavigationService.Interfaces;
+﻿using SutoNavigation.Interfaces;
 using SutoNavigation.Transitions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI.Xaml.Media;
 
 namespace SutoNavigation.Helpers

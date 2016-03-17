@@ -1,11 +1,6 @@
-﻿using SutoNavigation.NavigationService;
+﻿using SutoNavigation.Interfaces;
 using SutoNavigation.NavigationService.Interfaces;
 using SutoNavigation.Transitions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 
 namespace SutoNavigation.NavigationService

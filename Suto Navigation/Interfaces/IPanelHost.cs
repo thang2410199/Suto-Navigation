@@ -1,4 +1,5 @@
-﻿using SutoNavigation.Transitions;
+﻿using SutoNavigation.NavigationService;
+using SutoNavigation.Transitions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,9 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI;
 
-namespace SutoNavigation.NavigationService.Interfaces
+namespace SutoNavigation.Interfaces
 {
-    public interface IPanelHost
+    public interface IPanelHost : IMemoryManager
     {
         Size Size { get; }
         /// <summary>
@@ -17,7 +18,6 @@ namespace SutoNavigation.NavigationService.Interfaces
         /// </summary>
         int MinimumThresshold { get; set; }
 
-        bool AutoMemoryManagementEnabled { get; }
 
         /// <summary>
         /// Store all panel in the navigation stack

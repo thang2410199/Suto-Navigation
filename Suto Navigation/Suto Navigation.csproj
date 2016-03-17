@@ -112,6 +112,7 @@
     <Compile Include="EventArgs\OnScreenModeChangedArgs.cs" />
     <Compile Include="Helpers\SlideTransitionHelper.cs" />
     <Compile Include="Helpers\SmartWeakEvent.cs" />
+    <Compile Include="Interfaces\IMemoryManager.cs" />
     <Compile Include="Interfaces\IMemoryReactor.cs" />
     <Compile Include="Interfaces\IMemoryWatcher.cs" />
     <Compile Include="Interfaces\IPanel.cs" />
