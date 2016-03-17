@@ -289,14 +289,17 @@ namespace SutoNavigation.Transitions
             {
                 case TransitionDirection.BottomToTop:
                 case TransitionDirection.TopToBottom:
+                    if(transform.TranslateY != newPosition)
+                        e.Handled = true;
                     transform.TranslateY = newPosition;
                     break;
                 case TransitionDirection.LeftToRight:
                 case TransitionDirection.RightToLeft:
+                    if (transform.TranslateX != newPosition)
+                        e.Handled = true;
                     transform.TranslateX = newPosition;
                     break;
             }
-
         }
     }
 }
