@@ -392,7 +392,7 @@ namespace SutoNavigation.NavigationService
         {
             transitionStoryboard = new Storyboard();
             //We need to reset because the panel can be reused, not just created.
-            panel.Transition.ResetView(ref panel);
+            panel.Transition.ResetView(ref panel, isBack);
             panel.Transition.Setup(ref panel, isBack);
             var animations = panel.Transition.CreateAnimation(ref panel, isBack);
             foreach (var item in animations)

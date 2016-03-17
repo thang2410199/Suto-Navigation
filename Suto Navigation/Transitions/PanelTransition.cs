@@ -17,13 +17,17 @@ namespace SutoNavigation.Transitions
         public TimeSpan Duration { get; set; }
         public EasingFunctionBase EasingFunction { get; set; }
 
-        public void ResetView(ref PanelBase currentPanel)
+        public void ResetView(ref PanelBase currentPanel, bool isGoBack)
         {
-            var transform = currentPanel.RenderTransform as CompositeTransform;
-            transform.ScaleX = transform.ScaleY = 1;
-            transform.TranslateX = transform.TranslateY = 0;
-            currentPanel.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            currentPanel.Opacity = 1;
+            if (!isGoBack)
+            {
+
+                var transform = currentPanel.RenderTransform as CompositeTransform;
+                transform.ScaleX = transform.ScaleY = 1;
+                transform.TranslateX = transform.TranslateY = 0;
+                currentPanel.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                currentPanel.Opacity = 1;
+            }
         }
 
         /// <summary>
@@ -33,7 +37,7 @@ namespace SutoNavigation.Transitions
         /// <param name="isGoBack"></param>
         public virtual void Setup(ref PanelBase currentPanel, bool isGoBack)
         {
-            
+
         }
 
         /// <summary>
@@ -54,7 +58,7 @@ namespace SutoNavigation.Transitions
             if (currentIndex >= 1)
             {
                 var previousPanel = stack[currentIndex - 1];
-                ResetView(ref previousPanel);
+                ResetView(ref previousPanel, false);
             }
 
             Cleanup(ref currentPanel);
