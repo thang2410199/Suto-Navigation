@@ -53,7 +53,7 @@ namespace SutoNavigation
                 return this;
             }
 
-            public NavigationOptionBuilder AddOperationMode(Dictionary<string, object> arg)
+            public NavigationOptionBuilder AddArgument(Dictionary<string, object> arg)
             {
                 this.arguments = arg;
                 return this;

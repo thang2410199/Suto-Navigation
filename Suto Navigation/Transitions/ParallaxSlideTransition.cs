@@ -21,6 +21,7 @@ namespace SutoNavigation.Transitions
         private PanelBase currentPanel;
         private PanelBase lastPanel;
         private bool initialized = false;
+        private bool gestureSupport = true;
 
         public ParallaxSlideTransition()
         {
@@ -31,6 +32,13 @@ namespace SutoNavigation.Transitions
         {
             Direction = direction;
             this.Duration = Duration;
+        }
+
+        public ParallaxSlideTransition(TimeSpan Duration, TransitionDirection direction, bool gestureEnable = true)
+        {
+            Direction = direction;
+            this.Duration = Duration;
+            this.gestureSupport = gestureEnable;
         }
 
         /// <summary>
@@ -65,11 +73,13 @@ namespace SutoNavigation.Transitions
                         break;
 
                 }
-                RegisterManipulation(ref userControl);
+                if (gestureSupport)
+                    RegisterManipulation(ref userControl);
             }
             else
             {
-                UnregisterManipulation(ref userControl);
+                if (gestureSupport)
+                    UnregisterManipulation(ref userControl);
             }
         }
 
@@ -126,7 +136,8 @@ namespace SutoNavigation.Transitions
         {
             var lastTransform = lastPanel.RenderTransform as CompositeTransform;
             lastTransform.TranslateX = lastTransform.TranslateY = 0;
-            UnregisterManipulation(ref userControl);
+            if (gestureSupport)
+                UnregisterManipulation(ref userControl);
         }
 
         public override void SetupPreviousPanel(ref PanelBase lastUserControl)
@@ -289,7 +300,7 @@ namespace SutoNavigation.Transitions
             {
                 case TransitionDirection.BottomToTop:
                 case TransitionDirection.TopToBottom:
-                    if(transform.TranslateY != newPosition)
+                    if (transform.TranslateY != newPosition)
                         e.Handled = true;
                     transform.TranslateY = newPosition;
                     break;
