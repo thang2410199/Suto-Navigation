@@ -1,4 +1,5 @@
-﻿using SutoNavigation.Interfaces;
+﻿using System;
+using SutoNavigation.Interfaces;
 using SutoNavigation.NavigationService.Interfaces;
 using SutoNavigation.Transitions;
 using Windows.UI.Xaml.Controls;
@@ -47,6 +48,11 @@ namespace SutoNavigation.NavigationService
         public virtual void PanelSetup(IPanelHost host, NavigationOption options)
         {
             this.Host = host;
+        }
+
+        public virtual bool OnGoBack()
+        {
+            return true;
         }
     }
 }

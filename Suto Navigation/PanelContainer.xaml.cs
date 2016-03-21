@@ -266,11 +266,20 @@ namespace SutoNavigation.NavigationService
 
                 // Get the panel we are removing.
                 leavingPanel = PanelStack.Last();
+
+                // Give it a chance to react
+                var handled = leavingPanel.OnGoBack();
+                if (!handled)
+                    return false;
+
                 //// Remove the panel, use the index or we will remove the wrong one!
                 //PanelStack.RemoveAt(PanelStack.Count - 1);
 
-                if (PanelStack.Count > 1)
+                if (PanelStack.Count > 2)
+                {
                     PanelStack[PanelStack.Count - 2].Visibility = Visibility.Visible;
+                    PanelStack[PanelStack.Count - 3].Visibility = Visibility.Visible;
+                }
 
                 if (leavingPanel.Transition.GetType() != typeof(BasicTransition))
                 {
