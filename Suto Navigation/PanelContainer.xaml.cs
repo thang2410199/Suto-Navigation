@@ -280,7 +280,7 @@ namespace SutoNavigation.NavigationService
                     PanelStack[PanelStack.Count - 2].Visibility = Visibility.Visible;
                     PanelStack[PanelStack.Count - 3].Visibility = Visibility.Visible;
                 }
-
+                FireOnNavigateFrom(leavingPanel);
                 if (leavingPanel.Transition.GetType() != typeof(BasicTransition))
                 {
                     // TODO: Save animation state when navigating to to use here, or allow custom transition from outside
@@ -448,7 +448,7 @@ namespace SutoNavigation.NavigationService
         private void PanelBackAnimation_Completed(object sender, object e)
         {
             var leavingPanel = PanelStack.Last();
-            FireOnNavigateFrom(leavingPanel);
+            
             FireOnCleanupPanel(leavingPanel);
             PanelStack.RemoveAt(PanelStack.Count - 1);
             root.Children.Remove(leavingPanel);
