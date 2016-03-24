@@ -16,6 +16,13 @@ namespace SutoNavigation
 
         public Dictionary<string, object> Arguments { get; set; }
 
+        public object GetArgument(string key)
+        {
+            if (Arguments.ContainsKey(key))
+                return Arguments[key];
+            return null;
+        }
+
         public NavigationOption()
         {
             
