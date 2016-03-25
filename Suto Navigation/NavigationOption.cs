@@ -18,14 +18,26 @@ namespace SutoNavigation
 
         public object GetArgument(string key)
         {
-            if (Arguments.ContainsKey(key))
+            if (Arguments != null && Arguments.ContainsKey(key))
                 return Arguments[key];
             return null;
         }
 
+        public NavigationOption SetArgument(string key, object value)
+        {
+            if (Arguments == null)
+                Arguments = new Dictionary<string, object>();
+
+            if (Arguments.ContainsKey(key))
+                Arguments[key] = value;
+            else
+                Arguments.Add(key, value);
+            return this;
+        }
+
         public NavigationOption()
         {
-            
+
         }
 
         public NavigationOption(PanelTransition transition, OperationMode operationMode, Dictionary<string, object> arguments)
