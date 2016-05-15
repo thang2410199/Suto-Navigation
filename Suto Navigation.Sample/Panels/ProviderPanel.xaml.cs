@@ -15,6 +15,11 @@ namespace Suto_Navigation.Sample.Panes
             this.InitializeComponent();
         }
 
+        public override void OnNavigatingFrom()
+        {
+            base.OnNavigatingFrom();
+        }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             this.Host.Navigate(typeof(LoginPanel), null, NavigationOption.Builder()

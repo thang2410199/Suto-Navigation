@@ -250,6 +250,13 @@ namespace SutoNavigation.NavigationService
 
         public bool Navigate(Type panelType, Dictionary<string, object> arguments = null, NavigationOption options = null)
         {
+            //Fire NavigatedFrom event for current panel
+            if (PanelStack.Count > 0)
+            {
+                var currentPanel = PanelStack.LastOrDefault();
+                FireOnNavigateFrom(currentPanel);
+            }
+
             if (options == null)
                 options = NavigationOption.Builder().Build();
             PanelBase panel = null;
