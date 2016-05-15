@@ -13,62 +13,74 @@ namespace SutoNavigation.Transitions
 {
     public abstract class PanelTransition
     {
-        public TransitionDirection Direction { get; set; }
+        public TransitionDirection Direction { get; set; } = TransitionDirection.RightToLeft;
         public TimeSpan Duration { get; set; }
         public EasingFunctionBase EasingFunction { get; set; }
+
+        public void ResetView(ref PanelBase currentPanel, bool isGoBack)
+        {
+            if (!isGoBack)
+            {
+
+                var transform = currentPanel.RenderTransform as CompositeTransform;
+                transform.ScaleX = transform.ScaleY = 1;
+                transform.TranslateX = transform.TranslateY = 0;
+                currentPanel.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                currentPanel.Opacity = 1;
+            }
+        }
 
         /// <summary>
         /// called everytime before the transition setup happend
         /// </summary>
-        /// <param name="userControl"></param>
-        /// <param name="isBack"></param>
-        public virtual void SetInitialState(ref PanelBase userControl, bool isBack)
+        /// <param name="currentPanel"></param>
+        /// <param name="isGoBack"></param>
+        public virtual void Setup(ref PanelBase currentPanel, bool isGoBack)
         {
 
         }
 
-        public virtual List<Timeline> CreateAnimation(ref PanelBase userControl, bool isBack)
+        /// <summary>
+        /// Create list of animation will be played when navigation started
+        /// </summary>
+        /// <param name="currentPanel">the panel containt this transition</param>
+        /// <param name="isGoBack">indicate the direction of navigation, equals true if back requested</param>
+        /// <returns></returns>
+        public virtual List<Timeline> CreateAnimation(ref PanelBase currentPanel, bool isGoBack)
         {
             return new List<Timeline>();
         }
 
-        internal double GetSlideTransitionProperty(TransitionDirection direction, IPanelHost host)
+        public void ResetPreviousView(ref PanelBase currentPanel)
         {
-            switch (direction)
+            var stack = currentPanel.Host.PanelStack;
+            var currentIndex = stack.IndexOf(currentPanel);
+            if (currentIndex >= 1)
             {
-                case TransitionDirection.BottomToTop:
-                    return host.Size.Height;
-                case TransitionDirection.TopToBottom:
-                    return -host.Size.Height;
-                case TransitionDirection.LeftToRight:
-                    return -host.Size.Width;
-                case TransitionDirection.RightToLeft:
-                    return host.Size.Width;
+                var previousPanel = stack[currentIndex - 1];
+                ResetView(ref previousPanel, false);
             }
-            return host.Size.Width;
-        }
 
-        internal string GetTransitionProperty(TransitionDirection direction)
+            Cleanup(ref currentPanel);
+        }
+        /// <summary>
+        /// Overwrite this only if you made change to other panel
+        /// Called when the panel is reused for difference transition, clear thing up here
+        /// </summary>
+        /// <param name="currentPanel"></param>
+        public virtual void Cleanup(ref PanelBase currentPanel)
         {
-            switch (direction)
-            {
-                case TransitionDirection.BottomToTop:
-                case TransitionDirection.TopToBottom:
-                    return nameof(CompositeTransform.TranslateY);
-                case TransitionDirection.LeftToRight:
-                case TransitionDirection.RightToLeft:
-                    return nameof(CompositeTransform.TranslateX);
-            }
-            return nameof(CompositeTransform.TranslateX);
+
         }
 
         /// <summary>
-        /// Called when the panel is reused for difference transition, clear thing up here
+        /// Called when the parrent panel is removed from / moved in the Stack
+        /// Overwrite this only if you made change to other panel
         /// </summary>
-        /// <param name="userControl"></param>
-        public virtual void ResetOnReUse(ref PanelBase userControl)
+        /// <param name="previousPanel"></param>
+        public virtual void SetupPreviousPanel(ref PanelBase previousPanel)
         {
-            
+
         }
     }
 

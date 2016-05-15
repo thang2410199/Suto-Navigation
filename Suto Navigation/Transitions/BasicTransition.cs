@@ -8,19 +8,10 @@ using Windows.UI.Xaml.Media.Animation;
 
 namespace SutoNavigation.Transitions
 {
+    /// <summary>
+    /// Nothing to do here, as it's not return any animation
+    /// </summary>
     public class BasicTransition : PanelTransition
     {
-        public BasicTransition()
-        {
-        }
-
-        public override void SetInitialState(ref PanelBase userControl, bool isBack)
-        {
-        }
-
-        public override List<Timeline> CreateAnimation(ref PanelBase userControl, bool isBack)
-        {
-            return new List<Timeline>();
-        }
     }
 }

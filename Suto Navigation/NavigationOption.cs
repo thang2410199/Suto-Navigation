@@ -14,15 +14,37 @@ namespace SutoNavigation
 
         public OperationMode OperationMode { get; set; }
 
-        public NavigationOption()
+        public Dictionary<string, object> Arguments { get; set; }
+
+        public object GetArgument(string key)
         {
-            
+            if (Arguments != null && Arguments.ContainsKey(key))
+                return Arguments[key];
+            return null;
         }
 
-        public NavigationOption(PanelTransition transition, OperationMode operationMode)
+        public NavigationOption SetArgument(string key, object value)
+        {
+            if (Arguments == null)
+                Arguments = new Dictionary<string, object>();
+
+            if (Arguments.ContainsKey(key))
+                Arguments[key] = value;
+            else
+                Arguments.Add(key, value);
+            return this;
+        }
+
+        public NavigationOption()
+        {
+
+        }
+
+        public NavigationOption(PanelTransition transition, OperationMode operationMode, Dictionary<string, object> arguments)
         {
             this.Transition = transition;
             this.OperationMode = operationMode;
+            this.Arguments = arguments;
         }
 
         public static NavigationOptionBuilder Builder()
@@ -36,6 +58,8 @@ namespace SutoNavigation
 
             OperationMode operationMode = OperationMode.Auto;
 
+            Dictionary<string, object> arguments = null;
+
             public NavigationOptionBuilder AddTransition(PanelTransition transition)
             {
                 this.transition = transition;
@@ -48,12 +72,18 @@ namespace SutoNavigation
                 return this;
             }
 
+            public NavigationOptionBuilder AddArgument(Dictionary<string, object> arg)
+            {
+                this.arguments = arg;
+                return this;
+            }
+
             /// <summary>
             /// Return default option: BasicTranstion OperationMode.Auto
             /// </summary>
             public NavigationOption Build()
             {
-                return new NavigationOption(this.transition, this.operationMode);
+                return new NavigationOption(this.transition, this.operationMode, this.arguments);
             }
         }
     }

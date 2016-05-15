@@ -1,11 +1,7 @@
-﻿using SutoNavigation.NavigationService;
+﻿using System;
+using SutoNavigation.Interfaces;
 using SutoNavigation.NavigationService.Interfaces;
 using SutoNavigation.Transitions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 
 namespace SutoNavigation.NavigationService
@@ -30,6 +26,7 @@ namespace SutoNavigation.NavigationService
 
         public virtual void OnCleanupPanel()
         {
+            
         }
 
         public virtual void OnNavigatingFrom()
@@ -40,7 +37,7 @@ namespace SutoNavigation.NavigationService
         {
         }
 
-        public virtual void OnPanelPulledToTop(Dictionary<string, object> arguments)
+        public virtual void OnPanelPulledToTop(NavigationOption options)
         {
         }
 
@@ -48,9 +45,14 @@ namespace SutoNavigation.NavigationService
         {
         }
 
-        public virtual void PanelSetup(IPanelHost host, Dictionary<string, object> arguments)
+        public virtual void PanelSetup(IPanelHost host, NavigationOption options)
         {
             this.Host = host;
+        }
+
+        public virtual bool OnGoBack()
+        {
+            return true;
         }
     }
 }

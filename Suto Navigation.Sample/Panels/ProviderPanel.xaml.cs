@@ -22,9 +22,8 @@ namespace Suto_Navigation.Sample.Panes
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            this.Host.Navigate(typeof(LoginPanel), null, NavigationOption.Builder()
-                .AddTransition(new SlideInTransition(TimeSpan.FromSeconds(1)))
-                .AddOperationMode(OperationMode.Recycle)
+            this.Host.Navigate(typeof(ProfilePanel), NavigationOption.Builder()
+                .AddTransition(new ParallaxSlideTransition(TimeSpan.FromSeconds(1)))
                 .Build());
         }
     }
