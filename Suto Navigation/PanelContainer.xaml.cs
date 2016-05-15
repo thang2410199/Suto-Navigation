@@ -156,9 +156,9 @@ namespace SutoNavigation.NavigationService
             PanelBase previousPanel = null;
             int i = MinimumThresshold;
             bool needResetVisual = false;
-            while(i < PanelStack.Count - 1)
+            while (i < PanelStack.Count - 1)
             {
-                if(PanelStack[i].Importaness == target)
+                if (PanelStack[i].Importaness == target)
                 {
                     var panel = panelToClear[i];
                     FireOnReduceMemory(panel);
@@ -173,7 +173,7 @@ namespace SutoNavigation.NavigationService
                 }
                 else
                 {
-                    if(previousPanel != null && needResetVisual == true)
+                    if (previousPanel != null && needResetVisual == true)
                     {
                         //once the low importance panel is removed, we need to set the previous panel state to comfort this panel transition
                         PanelStack[i].Transition.SetupPreviousPanel(ref previousPanel);
@@ -335,7 +335,7 @@ namespace SutoNavigation.NavigationService
 
                         var oldPanelIndex = PanelStack.IndexOf(oldPanel);
                         // If its not the first Panel, re apply next panel transition initial state to the previous panel
-                        if(oldPanelIndex > 0 && oldPanelIndex + 1 < PanelStack.Count)
+                        if (oldPanelIndex > 0 && oldPanelIndex + 1 < PanelStack.Count)
                         {
                             var previousPanel = PanelStack[oldPanelIndex - 1];
                             PanelStack[oldPanelIndex + 1].Transition.SetupPreviousPanel(ref previousPanel);
@@ -388,7 +388,7 @@ namespace SutoNavigation.NavigationService
             this.root.Children.Add(panel);
 
             // Hide unuse panel to save render power and avoid getting in the way of more complex transition 
-            if(PanelStack.Count >= 3)
+            if (PanelStack.Count >= 3)
             {
                 PanelStack[PanelStack.Count - 3].Visibility = Visibility.Collapsed;
             }
@@ -455,10 +455,14 @@ namespace SutoNavigation.NavigationService
         private void PanelBackAnimation_Completed(object sender, object e)
         {
             var leavingPanel = PanelStack.Last();
-            
+
             FireOnCleanupPanel(leavingPanel);
             PanelStack.RemoveAt(PanelStack.Count - 1);
             root.Children.Remove(leavingPanel);
+            if (PanelStack.Count > 0)
+            {
+                FireOnNavigateTo(PanelStack.LastOrDefault());
+            }
             UpdateBackButton();
             state = NavigationState.Idle;
         }
