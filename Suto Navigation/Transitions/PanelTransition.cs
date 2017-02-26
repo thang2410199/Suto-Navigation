@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Composition;
 
 namespace SutoNavigation.Transitions
 {
@@ -21,7 +22,6 @@ namespace SutoNavigation.Transitions
         {
             if (!isGoBack)
             {
-
                 var transform = currentPanel.RenderTransform as CompositeTransform;
                 transform.ScaleX = transform.ScaleY = 1;
                 transform.TranslateX = transform.TranslateY = 0;
@@ -49,6 +49,10 @@ namespace SutoNavigation.Transitions
         public virtual List<Timeline> CreateAnimation(ref PanelBase currentPanel, bool isGoBack)
         {
             return new List<Timeline>();
+        }
+        public virtual List<KeyFrameAnimation> CreateAnimationWithComposition(ref PanelBase panel, bool isBack)
+        {
+            return new List<KeyFrameAnimation>();
         }
 
         public void ResetPreviousView(ref PanelBase currentPanel)
@@ -79,6 +83,11 @@ namespace SutoNavigation.Transitions
         /// </summary>
         /// <param name="previousPanel"></param>
         public virtual void SetupPreviousPanel(ref PanelBase previousPanel)
+        {
+
+        }
+
+        public virtual void Final(ref PanelBase currentPanel)
         {
 
         }

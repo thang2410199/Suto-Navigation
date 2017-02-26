@@ -21,6 +21,8 @@ using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using SutoNavigation.Transitions;
 using SutoNavigation.Interfaces;
+using Windows.UI.Composition;
+using Windows.UI.Xaml.Hosting;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -28,6 +30,7 @@ namespace SutoNavigation.NavigationService
 {
     public sealed partial class PanelContainer : UserControl, IPanelHost, IMemoryReactor
     {
+        public AnimationMode AnimationMode { get; set; } = AnimationMode.Transformer;
         public int MinimumThresshold { get; set; } = 0;
 
         bool _AutoMemoryManagementEnabled = false;
@@ -38,6 +41,8 @@ namespace SutoNavigation.NavigationService
                 return _AutoMemoryManagementEnabled;
             }
         }
+
+        public static Compositor Compositor = new Compositor();
 
         IMemoryWatcher memoryWatcher;
         IMemoryReactor memoryReactor;
@@ -82,6 +87,8 @@ namespace SutoNavigation.NavigationService
 
         public List<PanelBase> PanelStack { get; set; }
         private NavigationState state;
+        private CompositionAnimationGroup CompositionAnimationGroup;
+        private CompositionScopedBatch AnimationBatch;
 
         public PanelContainer()
         {
@@ -131,11 +138,11 @@ namespace SutoNavigation.NavigationService
             //var size = panelToClear.Count;
             //if (size > 0)
             //{
-            //    for (int i = 0; i < size; i++)
+            //    for (int j = 0; j < size; j++)
             //    {
-            //        var panel = panelToClear[i];
+            //        var panel = panelToClear[j];
             //        FireOnReduceMemory(panel);
-            //        panel.Transition.ResetOnReUse(ref panel);
+            //        panel.Transition.Cleanup(ref panel);
 
             //        //Remove from stack
             //        PanelStack.Remove(panel);
@@ -147,20 +154,21 @@ namespace SutoNavigation.NavigationService
 
             ////Re apply effect for the remained panel, from top to bottm
             ////TODO: Find a more optimized way
-            //for (int i = PanelStack.Count - 1; i > 0; i--)
+            //for (int k = PanelStack.Count - 1; k > 0; k--)
             //{
-            //    var lastPanel = PanelStack[i - 1];
-            //    PanelStack[i].Transition.SetLastPanelInitialState(ref lastPanel);
+            //    var lastPanel = PanelStack[k - 1];
+            //    PanelStack[k].Transition.SetupPreviousPanel(ref lastPanel);
             //}
 
-            PanelBase previousPanel = null;
+            PanelBase previousPanel = PanelStack.Count > MinimumThresshold ? PanelStack[MinimumThresshold - 1] : null;
             int i = MinimumThresshold;
             bool needResetVisual = false;
-            while (i < PanelStack.Count - 1)
+            // From bottom to top, e.g: 0 -> 4
+            while (i < PanelStack.Count)
             {
-                if (PanelStack[i].Importaness == target)
+                if (PanelStack[i].Importaness == target && i != (PanelStack.Count - 1))
                 {
-                    var panel = panelToClear[i];
+                    var panel = PanelStack[i];
                     FireOnReduceMemory(panel);
 
                     //Remove from stack
@@ -181,8 +189,9 @@ namespace SutoNavigation.NavigationService
                     }
 
                     previousPanel = PanelStack[i];
+
+                    i++;
                 }
-                i++;
             }
         }
 
@@ -280,13 +289,29 @@ namespace SutoNavigation.NavigationService
                     PanelStack[PanelStack.Count - 2].Visibility = Visibility.Visible;
                     PanelStack[PanelStack.Count - 3].Visibility = Visibility.Visible;
                 }
+                else
+                {
+                    if (PanelStack.Count > 0)
+                    {
+                        PanelStack[0].Visibility = Visibility.Visible;
+                    }
+                }
                 FireOnNavigateFrom(leavingPanel);
                 if (leavingPanel.Transition.GetType() != typeof(BasicTransition))
                 {
                     // TODO: Save animation state when navigating to to use here, or allow custom transition from outside
                     //transitionStoryboard?.Stop();
                     SetupTransition(ref leavingPanel, true);
-                    transitionStoryboard.Begin();
+                    if (transitionStoryboard != null && this.AnimationMode == AnimationMode.Transformer)
+                    {
+                        transitionStoryboard.Begin();
+                    }
+                    else
+                    {
+                        var visual = ElementCompositionPreview.GetElementVisual(leavingPanel);
+                        visual.StartAnimationGroup(CompositionAnimationGroup);
+                        AnimationBatch.End();
+                    }
                     state = NavigationState.Transiting;
                 }
                 else
@@ -393,37 +418,92 @@ namespace SutoNavigation.NavigationService
                 PanelStack[PanelStack.Count - 3].Visibility = Visibility.Collapsed;
             }
 
-            if (panel.Transition.GetType() != typeof(BasicTransition))
+            if (panel.Transition.GetType() == typeof(BasicTransition) ||
+                (this.AnimationMode == AnimationMode.Transformer && this.transitionStoryboard.Children.Count == 0) ||
+                (this.AnimationMode == AnimationMode.Composition && this.CompositionAnimationGroup.Count == 0)
+                )
             {
-                transitionStoryboard.Begin();
-                state = NavigationState.Transiting;
+                PanelAnimation_Completed(null, null);
             }
             else
             {
-                PanelAnimation_Completed(null, null);
+                if (this.AnimationMode == AnimationMode.Transformer)
+                {
+                    transitionStoryboard.Begin();
+                }
+                else
+                {
+                    var visual = ElementCompositionPreview.GetElementVisual(panel);
+                    visual.StartAnimationGroup(CompositionAnimationGroup);
+                    AnimationBatch.End();
+                }
+                state = NavigationState.Transiting;
             }
         }
 
         private void SetupTransition(ref PanelBase panel, bool isBack = false)
+        {
+            switch (AnimationMode)
+            {
+                case AnimationMode.Transformer:
+                    SetupTransformerTransition(ref panel, isBack);
+                    break;
+                case AnimationMode.Composition:
+                    SetupCompositionTransition(ref panel, isBack);
+                    break;
+            }
+        }
+
+        private void SetupTransformerTransition(ref PanelBase panel, bool isBack = false)
         {
             transitionStoryboard = new Storyboard();
             //We need to reset because the panel can be reused, not just created.
             panel.Transition.ResetView(ref panel, isBack);
             panel.Transition.Setup(ref panel, isBack);
             var animations = panel.Transition.CreateAnimation(ref panel, isBack);
+            if (animations.Count == 0)
+            {
+                return;
+            }
+
             foreach (var item in animations)
             {
                 transitionStoryboard.Children.Add(item);
             }
 
-
             if (isBack)
                 transitionStoryboard.Completed += PanelBackAnimation_Completed;
             else
                 transitionStoryboard.Completed += PanelAnimation_Completed;
+        }
 
-            return;
+        private void SetupCompositionTransition(ref PanelBase panel, bool isBack = false)
+        {
+            panel.Transition.ResetView(ref panel, isBack);
+            panel.Transition.Setup(ref panel, isBack);
 
+
+
+            var visual = ElementCompositionPreview.GetElementVisual(panel);
+            this.AnimationBatch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var group = visual.Compositor.CreateAnimationGroup();
+            var animations = panel.Transition.CreateAnimationWithComposition(ref panel, isBack);
+
+            if (animations.Count == 0)
+            {
+                AnimationBatch.End();
+                return;
+            }
+            foreach (var item in animations)
+            {
+                group.Add(item);
+            }
+            this.CompositionAnimationGroup = group;
+
+            if (isBack)
+                AnimationBatch.Completed += PanelBackAnimation_Completed;
+            else
+                AnimationBatch.Completed += PanelAnimation_Completed;
         }
 
 
@@ -437,16 +517,13 @@ namespace SutoNavigation.NavigationService
             throw new NotImplementedException();
         }
 
-        public void ToggleMenu(bool show)
-        {
-            throw new NotImplementedException();
-        }
-
         private void PanelAnimation_Completed(object sender, object e)
         {
             // Update the back button
             UpdateBackButton();
-            FireOnNavigateTo(PanelStack.Last());
+            var lastPanel = PanelStack.Last();
+            lastPanel.Transition.Final(ref lastPanel);
+            FireOnNavigateTo(lastPanel);
             state = NavigationState.Idle;
 
             FireOnNavigateComplete();
@@ -585,5 +662,11 @@ namespace SutoNavigation.NavigationService
         Auto,
         Normal,
         Recycle,
+    }
+
+    public enum AnimationMode
+    {
+        Transformer,
+        Composition
     }
 }

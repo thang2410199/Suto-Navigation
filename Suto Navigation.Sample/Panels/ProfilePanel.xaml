@@ -2,34 +2,51 @@
     x:Class="Suto_Navigation.Sample.Panes.ProfilePanel"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Suto_Navigation.Sample.Panes"
-    xmlns:suto="using:SutoNavigation.NavigationService"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Suto_Navigation.Sample.Panes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
+    xmlns:suto="using:SutoNavigation.NavigationService"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}"  x:Name="panelRoot">
+    <Grid x:Name="panelRoot" Background="{ThemeResource SystemControlBackgroundAccentBrush}">
         <StackPanel HorizontalAlignment="Left">
-            <Border Width="200" Height="200" Background="White"/>
-            <Border Width="200" Height="200" Background="BurlyWood"/>
-            <Border Width="200" Height="200" Background="Chartreuse"/>
-            <Border Width="200" Height="200" Background="PaleGreen"/>
+            <Border
+                Width="200"
+                Height="200"
+                Background="White" />
+            <Border
+                Width="200"
+                Height="200"
+                Background="BurlyWood" />
+            <Border
+                Width="200"
+                Height="200"
+                Background="Chartreuse" />
+            <Border
+                Width="200"
+                Height="200"
+                Background="PaleGreen" />
         </StackPanel>
-        
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" >
 
-            <Button Content="Navigate" Click="Button_Click"/>
+        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center">
+
+            <Button Click="Button_Click" Content="Navigate" />
         </StackPanel>
 
-        <ComboBox SelectedIndex="0" VerticalAlignment="Center" Margin="0,0,0,100" SelectionChanged="ComboBox_SelectionChanged">
-            <ComboBoxItem Content="Use Scale transition"/>
-            <ComboBoxItem Content="Use Slide in transition"/>
-            <ComboBoxItem Content="Use Slide push transition"/>
-            <ComboBoxItem Content="Use Faid in transition"/>
-            <ComboBoxItem Content="Use Parallax transition"/>
-            <ComboBoxItem Content="Use Scale slide transition"/>
+        <ComboBox
+            Margin="0,0,0,100"
+            VerticalAlignment="Center"
+            SelectedIndex="0"
+            SelectionChanged="ComboBox_SelectionChanged">
+            <ComboBoxItem Content="Use Scale transition" />
+            <ComboBoxItem Content="Use Slide in transition" />
+            <ComboBoxItem Content="Use Slide push transition" />
+            <ComboBoxItem Content="Use Fade in transition" />
+            <ComboBoxItem Content="Use Parallax transition" />
+            <ComboBoxItem Content="Use Scale slide transition" />
+            <ComboBoxItem Content="Use Fade in composition transition" />
         </ComboBox>
 
     </Grid>
