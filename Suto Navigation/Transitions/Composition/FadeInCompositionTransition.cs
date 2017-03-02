@@ -35,19 +35,19 @@ namespace SutoNavigation.Transitions
             base.Setup(ref userControl, isGoBack);
             if (!isGoBack)
             {
-                visual = ElementCompositionPreview.GetElementVisual(userControl);
-                visual.Opacity = initialOpacity;
+                userControl.Visual.Opacity = initialOpacity;
             }
         }
 
-        public override List<KeyFrameAnimation> CreateAnimationWithComposition(ref PanelBase panel, bool isBack)
+        public override CompositionAnimationGroup CreateAnimationWithComposition(ref PanelBase panel, bool isBack)
         {
-            var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
+            var animation = panel.Compositor.CreateScalarKeyFrameAnimation();
             animation.InsertKeyFrame(0f, visual.Opacity);
             animation.InsertKeyFrame(1f, isBack ? this.initialOpacity : this.endOpacity);
             animation.Target = nameof(Visual.Opacity);
             animation.Duration = this.Duration;
-            var animations = new List<KeyFrameAnimation>();
+
+            var animations = panel.Compositor.CreateAnimationGroup();
             animations.Add(animation);
             return animations;
         }

@@ -2,21 +2,37 @@
     x:Class="Suto_Navigation.Sample.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Suto_Navigation.Sample"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Suto_Navigation.Sample"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" xmlns:suto="using:SutoNavigation.NavigationService">
+    xmlns:suto="using:SutoNavigation.NavigationService"
+    mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <!--Alternative way to use container-->
+        <!--  Alternative way to use container  -->
         <!--<suto:PanelContainer/>-->
 
-        <Grid x:Name="root"></Grid>
+        <Grid x:Name="root" />
 
-        <TextBlock VerticalAlignment="Top" Text="Number of panel in stack" Name="StackCount_TB"/>
+        <TextBlock
+            Name="StackCount_TB"
+            VerticalAlignment="Top"
+            Text="Number of panel in stack" />
 
-        <Button Click="Update_Panel_Count" Content="update" VerticalAlignment="Bottom"/>
+        <Button
+            VerticalAlignment="Bottom"
+            Click="Update_Panel_Count"
+            Content="update" />
 
-        <Button Click="Fire_Low_Mem" Content="simulate low memory" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+        <Button
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Click="Fire_Low_Mem"
+            Content="simulate low memory" />
+
+        <Button
+            HorizontalAlignment="Right"
+            Click="ToggleAnimationMode_Click"
+            Content="Toggle Animation mode" />
     </Grid>
 </Page>

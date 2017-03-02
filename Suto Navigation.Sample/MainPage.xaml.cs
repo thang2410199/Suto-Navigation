@@ -37,7 +37,7 @@ namespace Suto_Navigation.Sample
             panelContainer.Navigate(typeof(ProfilePanel));
             //panelContainer.AnimationMode = AnimationMode.Composition;
             //Comment below line to use Nomarl mode, which create new Panel when navigating
-            //panelContainer.OperationMode = OperationMode.Recycle;
+            panelContainer.OperationMode = OperationMode.Recycle;
             panelContainer.EnableAutoMemoryManagement(new BasicMemoryWatcher());
             root.Children.Add(panelContainer);
 
@@ -63,6 +63,18 @@ namespace Suto_Navigation.Sample
         private void Fire_Low_Mem(object sender, RoutedEventArgs e)
         {
             panelContainer.RequestFreeMemory(new MemoryReportArgs(SutoNavigation.Interfaces.MemoryPressureStates.Medium));
+        }
+
+        private void ToggleAnimationMode_Click(object sender, RoutedEventArgs e)
+        {
+            if (panelContainer.AnimationMode == AnimationMode.Composition)
+            {
+                panelContainer.AnimationMode = AnimationMode.Transformer;
+            }
+            else
+            {
+                panelContainer.AnimationMode = AnimationMode.Composition;
+            }
         }
     }
 }

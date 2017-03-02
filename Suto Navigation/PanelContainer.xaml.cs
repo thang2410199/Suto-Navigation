@@ -42,8 +42,6 @@ namespace SutoNavigation.NavigationService
             }
         }
 
-        public static Compositor Compositor = new Compositor();
-
         IMemoryWatcher memoryWatcher;
         IMemoryReactor memoryReactor;
 
@@ -297,28 +295,30 @@ namespace SutoNavigation.NavigationService
                     }
                 }
                 FireOnNavigateFrom(leavingPanel);
-                if (leavingPanel.Transition.GetType() != typeof(BasicTransition))
+                if (leavingPanel.Transition.GetType() == typeof(BasicTransition) ||
+                (this.AnimationMode == AnimationMode.Transformer && (this.transitionStoryboard == null || this.transitionStoryboard.Children.Count == 0)) ||
+                (this.AnimationMode == AnimationMode.Composition && (this.CompositionAnimationGroup == null || this.CompositionAnimationGroup.Count == 0)))
+                {
+
+                    // While not under lock inform the panel it is leaving.
+                    // If Transition is none, just leave now
+                    PanelBackAnimation_Completed(null, null);
+                }
+                else
                 {
                     // TODO: Save animation state when navigating to to use here, or allow custom transition from outside
                     //transitionStoryboard?.Stop();
                     SetupTransition(ref leavingPanel, true);
-                    if (transitionStoryboard != null && this.AnimationMode == AnimationMode.Transformer)
+                    if (this.AnimationMode == AnimationMode.Transformer)
                     {
                         transitionStoryboard.Begin();
                     }
-                    else
+                    if (this.AnimationMode == AnimationMode.Composition)
                     {
-                        var visual = ElementCompositionPreview.GetElementVisual(leavingPanel);
-                        visual.StartAnimationGroup(CompositionAnimationGroup);
+                        leavingPanel.Visual.StartAnimationGroup(CompositionAnimationGroup);
                         AnimationBatch.End();
                     }
                     state = NavigationState.Transiting;
-                }
-                else
-                {
-                    // While not under lock inform the panel it is leaving.
-                    // If Transition is none, just leave now
-                    PanelBackAnimation_Completed(null, null);
                 }
             }
 
@@ -419,8 +419,8 @@ namespace SutoNavigation.NavigationService
             }
 
             if (panel.Transition.GetType() == typeof(BasicTransition) ||
-                (this.AnimationMode == AnimationMode.Transformer && this.transitionStoryboard.Children.Count == 0) ||
-                (this.AnimationMode == AnimationMode.Composition && this.CompositionAnimationGroup.Count == 0)
+                (this.AnimationMode == AnimationMode.Transformer && (transitionStoryboard == null || this.transitionStoryboard.Children.Count == 0)) ||
+                (this.AnimationMode == AnimationMode.Composition && (this.CompositionAnimationGroup == null || this.CompositionAnimationGroup.Count == 0))
                 )
             {
                 PanelAnimation_Completed(null, null);
@@ -433,8 +433,7 @@ namespace SutoNavigation.NavigationService
                 }
                 else
                 {
-                    var visual = ElementCompositionPreview.GetElementVisual(panel);
-                    visual.StartAnimationGroup(CompositionAnimationGroup);
+                    panel.Visual.StartAnimationGroup(CompositionAnimationGroup);
                     AnimationBatch.End();
                 }
                 state = NavigationState.Transiting;
@@ -483,13 +482,11 @@ namespace SutoNavigation.NavigationService
             panel.Transition.Setup(ref panel, isBack);
 
 
-
-            var visual = ElementCompositionPreview.GetElementVisual(panel);
-            this.AnimationBatch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            var group = visual.Compositor.CreateAnimationGroup();
+            this.AnimationBatch = panel.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var group = panel.Compositor.CreateAnimationGroup();
             var animations = panel.Transition.CreateAnimationWithComposition(ref panel, isBack);
 
-            if (animations.Count == 0)
+            if (animations == null || animations.Count == 0)
             {
                 AnimationBatch.End();
                 return;

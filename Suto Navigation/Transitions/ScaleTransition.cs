@@ -64,5 +64,13 @@ namespace SutoNavigation.Transitions
 
             return new List<Timeline>() { animationX, animationY };
         }
+
+        public override void Final(ref PanelBase currentPanel)
+        {
+            base.Final(ref currentPanel);
+
+            var render = currentPanel.RenderTransform as CompositeTransform;
+            render.ScaleX = render.ScaleY = endScale;
+        }
     }
 }

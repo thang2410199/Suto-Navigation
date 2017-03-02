@@ -1,11 +1,15 @@
 ﻿using SutoNavigation.Interfaces;
 using SutoNavigation.Transitions;
+using Windows.UI.Composition;
 
 namespace SutoNavigation.NavigationService.Interfaces
 {
     public interface IPanel
     {
         IPanelHost Host { get; set; }
+
+        Compositor Compositor { get; }
+        Visual Visual { get; }
         PanelTransition Transition { get; set; }
         /// <summary>
         /// Fired when the panel is being created.

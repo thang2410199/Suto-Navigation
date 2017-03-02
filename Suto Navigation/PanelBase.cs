@@ -3,12 +3,17 @@ using SutoNavigation.Interfaces;
 using SutoNavigation.NavigationService.Interfaces;
 using SutoNavigation.Transitions;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Composition;
+using Windows.UI.Xaml.Hosting;
 
 namespace SutoNavigation.NavigationService
 {
     public class PanelBase : UserControl, IPanel
     {
         public IPanelHost Host { get; set; }
+
+        public Compositor Compositor { get; private set; }
+        public Visual Visual { get; private set; }
 
         /// <summary>
         /// Default Importaness is Normal
@@ -24,9 +29,20 @@ namespace SutoNavigation.NavigationService
             get; set;
         } = new BasicTransition();
 
+        public PanelBase() : base()
+        {
+            Visual = ElementCompositionPreview.GetElementVisual(this);
+            Compositor = Visual.Compositor;
+        }
+
+        private void PanelBase_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+
+        }
+
         public virtual void OnCleanupPanel()
         {
-            
+
         }
 
         public virtual void OnNavigatingFrom()

@@ -166,6 +166,10 @@
       <Project>{43b6d752-a51a-4ffb-adcd-3d3e59465740}</Project>
       <Name>Suto Navigation Composition</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Suto Navigation\Suto Navigation.csproj">
+      <Project>{0513c5aa-9999-4599-b6a5-bd97e006dd39}</Project>
+      <Name>Suto Navigation</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
