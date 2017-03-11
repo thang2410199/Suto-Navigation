@@ -63,6 +63,11 @@ namespace Suto_Navigation.Sample.Panes
                         .AddTransition(new FadeInCompositionTransition(TimeSpan.FromSeconds(0.4)))
                         .Build();
                     break;
+                case 7:
+                    option = NavigationOption.Builder()
+                        .AddTransition(new ParallaxSlideCompositionTransition())
+                        .Build();
+                    break;                    
             }
         }
     }

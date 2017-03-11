@@ -50,7 +50,7 @@ namespace SutoNavigation.Transitions
         {
             return new List<Timeline>();
         }
-        public virtual CompositionAnimationGroup CreateAnimationWithComposition(ref PanelBase panel, bool isBack)
+        public virtual List<(CompositionAnimationGroup animationGroup, IPanel panel)> CreateAnimationWithComposition(ref PanelBase panel, bool isBack)
         {
             return null;
         }

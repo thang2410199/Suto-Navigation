@@ -47,6 +47,7 @@
             <ComboBoxItem Content="Use Parallax transition" />
             <ComboBoxItem Content="Use Scale slide transition" />
             <ComboBoxItem Content="Use Fade in composition transition" />
+            <ComboBoxItem Content="Use Parallax composition transition" />
         </ComboBox>
 
     </Grid>

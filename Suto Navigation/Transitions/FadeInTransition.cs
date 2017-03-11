@@ -52,5 +52,11 @@ namespace SutoNavigation.Transitions
 
             return new List<Timeline>() { animation };
         }
+
+        public override void Final(ref PanelBase currentPanel)
+        {
+            base.Final(ref currentPanel);
+            currentPanel.Opacity = 1;
+        }
     }
 }

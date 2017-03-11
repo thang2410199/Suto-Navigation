@@ -85,7 +85,7 @@ namespace SutoNavigation.NavigationService
 
         public List<PanelBase> PanelStack { get; set; }
         private NavigationState state;
-        private CompositionAnimationGroup CompositionAnimationGroup;
+        private List<(CompositionAnimationGroup animationGroup, IPanel panel)> CompositionAnimationGroup;
         private CompositionScopedBatch AnimationBatch;
 
         public PanelContainer()
@@ -315,7 +315,10 @@ namespace SutoNavigation.NavigationService
                     }
                     if (this.AnimationMode == AnimationMode.Composition)
                     {
-                        leavingPanel.Visual.StartAnimationGroup(CompositionAnimationGroup);
+                        foreach (var item in CompositionAnimationGroup)
+                        {
+                            item.panel.Visual.StartAnimationGroup(item.animationGroup);
+                        }
                         AnimationBatch.End();
                     }
                     state = NavigationState.Transiting;
@@ -433,7 +436,10 @@ namespace SutoNavigation.NavigationService
                 }
                 else
                 {
-                    panel.Visual.StartAnimationGroup(CompositionAnimationGroup);
+                    foreach (var item in CompositionAnimationGroup)
+                    {
+                        item.panel.Visual.StartAnimationGroup(item.animationGroup);
+                    }
                     AnimationBatch.End();
                 }
                 state = NavigationState.Transiting;
@@ -483,7 +489,6 @@ namespace SutoNavigation.NavigationService
 
 
             this.AnimationBatch = panel.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            var group = panel.Compositor.CreateAnimationGroup();
             var animations = panel.Transition.CreateAnimationWithComposition(ref panel, isBack);
 
             if (animations == null || animations.Count == 0)
@@ -491,11 +496,7 @@ namespace SutoNavigation.NavigationService
                 AnimationBatch.End();
                 return;
             }
-            foreach (var item in animations)
-            {
-                group.Add(item);
-            }
-            this.CompositionAnimationGroup = group;
+            this.CompositionAnimationGroup = animations;
 
             if (isBack)
                 AnimationBatch.Completed += PanelBackAnimation_Completed;

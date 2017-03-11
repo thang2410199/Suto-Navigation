@@ -35,7 +35,7 @@ namespace Suto_Navigation.Sample
             panelContainer = new PanelContainer();
             panelContainer.MinimumThresshold = 1;
             panelContainer.Navigate(typeof(ProfilePanel));
-            //panelContainer.AnimationMode = AnimationMode.Composition;
+            panelContainer.AnimationMode = AnimationMode.Composition;
             //Comment below line to use Nomarl mode, which create new Panel when navigating
             panelContainer.OperationMode = OperationMode.Recycle;
             panelContainer.EnableAutoMemoryManagement(new BasicMemoryWatcher());
